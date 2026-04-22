@@ -2,73 +2,45 @@
 
 ## High priority (next sprint)
 
-### 1. DynamicLifeTable — accept external forecasts directly
+### 1. ~~DynamicLifeTable — accept external forecasts directly~~ ✅ DONE
 
-**Goal:** Let users bring their own mortality-rate predictions from any model
-(neural net, gradient boosting, external R/Julia model, etc.) and immediately
-build actuarial functions on top of them.
+Implemented in `src/pylifecontingencies/dynamic/` with 31 unit tests
+(`tests/test_dynamic_lifetable.py`).
 
-**Design:**
+**Files created:**
 
-```python
-from pylifecontingencies.dynamic import DynamicLifeTable, DynamicActuarialTable
-
-# Option A — cohort table from a single forecast path (ages × years DataFrame)
-# User passes predicted qx or mx, we extract the cohort diagonal
-dlt = DynamicLifeTable.from_forecast_mx(
-    df_mx,             # pd.DataFrame: ages as index, years as columns
-    birth_year=1985,
-)
-
-# Option B — period table (all ages from same calendar year)
-dlt = DynamicLifeTable.from_forecast_qx(
-    df_qx,
-    period_year=2040,
-)
-
-# Option C — multiple scenarios / sample paths (stochastic)
-# df_mx_samples: shape (n_samples, n_ages, n_years) or list of DataFrames
-dlt = DynamicLifeTable.from_scenarios(df_mx_samples, birth_year=1985)
-
-# Build an actuarial table from it
-dat = DynamicActuarialTable(dlt, i=0.03)
-
-# Same API as ActuarialTable — single-path case returns a scalar
-dat.axn(x=40, n=25)          # ä_{40:25|}
-dat.Axn(x=40)                # A_40 (whole-life)
-dat.net_premium(x=40, n=25)  # net premium
-
-# Stochastic case returns a distribution (median + percentiles)
-dat.axn(x=40, n=25)
-# → { "mean": 14.2, "median": 14.1, "p05": 12.8, "p95": 15.7, "samples": [...] }
-```
-
-**Files to create / modify:**
-
-- `src/pylifecontingencies/dynamic/dynamic_lifetable.py` — `DynamicLifeTable` class
-- `src/pylifecontingencies/dynamic/dynamic_actuarialtable.py` — `DynamicActuarialTable` class
-- `src/pylifecontingencies/dynamic/__init__.py` — re-export new classes
-- `tests/test_dynamic_lifetable.py` — unit tests
-
-**Key design decisions:**
-
-- Single-path input → `DynamicLifeTable` wraps a plain `LifeTable` internally;
-  `DynamicActuarialTable.axn()` returns a float just like the static API.
-- Multi-path (stochastic) input → stores a list of `LifeTable` objects;
-  actuarial functions return a `StochasticResult` with `mean`, `std`,
-  `quantile(q)`, `samples` array.
-- `DynamicActuarialTable` should be a drop-in replacement for `ActuarialTable`
-  in the single-path case (same method signatures, same return types).
+- `dynamic_lifetable.py` — `DynamicLifeTable` class with constructors:
+  `from_forecast_mx`, `from_forecast_qx`, `from_forecast_log_mx`,
+  `from_scenarios`, `from_scenarios_array`
+- `dynamic_actuarialtable.py` — `DynamicActuarialTable` (wraps DynamicLifeTable + interest rate);
+  single-path returns float, stochastic returns `StochasticResult`
+- `stochastic.py` — `StochasticResult` container with `mean`, `std`, `quantile(q)`, `ci(level)`
+- `dynamic/__init__.py` — re-exports new classes
 
 ---
 
-### 2. ProjectedLifeTable improvements
+### 2. ~~ProjectedLifeTable improvements~~ ✅ DONE
 
-- Accept raw DataFrames directly (not just `LeeCarterForecast` / `CBDForecast`)
-  so external forecasts slot in without wrapping.
-- `from_mx(df, birth_year)`, `from_qx(df, birth_year)` class methods.
-- Handle cohort ages that extend beyond the forecast horizon by extrapolating
-  using the last available age pattern (constant log-mortality slope).
+Consolidated `ProjectedLifeTable` and `DynamicLifeTable` into a single
+model-agnostic class (`projected_table.py`). 29 tests
+(`tests/test_projected_table.py`). Backward-compatible with model forecast
+objects and `DynamicLifeTable`.
+
+**Class methods** (accept raw DataFrames from any model):
+
+- `ProjectedLifeTable.from_mx(df, lower=..., upper=..., birth_year=...)`
+- `ProjectedLifeTable.from_qx(df, lower=..., upper=..., birth_year=...)`
+- `ProjectedLifeTable.from_log_mx(df, lower=..., upper=..., birth_year=...)`
+- `ProjectedLifeTable.from_scenarios(list_of_dfs, birth_year=...)`
+- `ProjectedLifeTable.from_scenarios_array(arr, ages=..., years=..., birth_year=...)`
+
+**Prediction intervals**: pass `lower` and `upper` DataFrames to any constructor.
+Produces `.lower`, `.lifetable` (central), `.upper` properties.
+
+**Extrapolation strategies**: `"clamp"` (default), `"constant_slope"`, `"none"`.
+
+**Integration**: `DynamicActuarialTable` now accepts both `ProjectedLifeTable`
+and `DynamicLifeTable`. PI/stochastic tables return `StochasticResult`.
 
 ---
 

@@ -64,7 +64,7 @@ src/pylifecontingencies/
     ├── leecarter.py      # LeeCarter: SVD fit + ARIMA kt forecast + bootstrap PI
     ├── cbd.py            # CBD M5: per-year logistic OLS + bivariate RW forecast
     ├── bootstrap.py      # residual_bootstrap, parametric_bootstrap helpers
-    └── projected_table.py# ProjectedLifeTable: cohort diagonal -> LifeTable
+    └── projected_table.py# ProjectedLifeTable: from_mx/from_qx/from_log_mx + cohort/period + extrapolation
 ```
 
 ## Key design decisions

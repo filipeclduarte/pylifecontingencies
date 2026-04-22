@@ -1,13 +1,14 @@
 """
-DynamicActuarialTable: actuarial present values on top of a DynamicLifeTable.
+DynamicActuarialTable: actuarial present values on top of a
+ProjectedLifeTable or DynamicLifeTable.
 
-- **Single-path** DynamicLifeTable → all methods return ``float``, behaving
-  identically to ``ActuarialTable``.
-- **Stochastic** DynamicLifeTable → all methods return ``StochasticResult``,
-  giving mean, std, percentiles, and the full sample vector across scenarios.
+- **Single-path** → all methods return ``float``, behaving identically
+  to ``ActuarialTable``.
+- **Stochastic / PI** → all methods return ``StochasticResult``, giving
+  mean, std, percentiles, and the full sample vector across scenarios.
 
-The class is a drop-in replacement for ``ActuarialTable`` in the single-path
-case — same method signatures, same return types.
+The class is a drop-in replacement for ``ActuarialTable`` in the
+single-path case — same method signatures, same return types.
 """
 
 from __future__ import annotations
@@ -19,6 +20,7 @@ import numpy as np
 from ..actuarialtable import ActuarialTable
 from ..interest import InterestRate
 from .dynamic_lifetable import DynamicLifeTable
+from .projected_table import ProjectedLifeTable
 from .stochastic import StochasticResult
 
 # Type alias for return values
@@ -29,42 +31,66 @@ _ListResult = Union[list[float], list[StochasticResult]]
 
 class DynamicActuarialTable:
     """
-    Actuarial table built on top of a DynamicLifeTable.
+    Actuarial table built on top of a ProjectedLifeTable or DynamicLifeTable.
 
     Wraps one or more ActuarialTable instances (one per scenario) and
     exposes the same EPV API. Returns ``float`` for single-path tables
-    and ``StochasticResult`` for stochastic tables.
+    and ``StochasticResult`` for stochastic/PI tables.
 
     Parameters
     ----------
-    dynamic_lifetable : DynamicLifeTable
+    source : ProjectedLifeTable, DynamicLifeTable, or LifeTable list
     interest : float or InterestRate
         Annual effective interest rate.
 
     Examples
     --------
-    Single forecast path::
+    From a ProjectedLifeTable::
 
-        dlt = DynamicLifeTable.from_forecast_mx(df_mx, birth_year=1985)
-        dat = DynamicActuarialTable(dlt, i=0.03)
-        dat.axn(x=40)           # → float
-        dat.net_premium(x=40, n=25)   # → float
+        plt = ProjectedLifeTable.from_mx(df, birth_year=1985)
+        dat = DynamicActuarialTable(plt, i=0.03)
+        dat.axn(x=40)   # → float
 
-    Stochastic (500 bootstrap paths)::
+    With prediction intervals::
 
-        dlt = DynamicLifeTable.from_scenarios(paths, birth_year=1985)
-        dat = DynamicActuarialTable(dlt, i=0.03)
+        plt = ProjectedLifeTable.from_mx(
+            df, lower=df_lo, upper=df_hi, birth_year=1985
+        )
+        dat = DynamicActuarialTable(plt, i=0.03)
+        r = dat.axn(x=40)   # → StochasticResult (3 values: lo, central, hi)
+
+    Stochastic (N scenarios)::
+
+        plt = ProjectedLifeTable.from_scenarios(paths, birth_year=1985)
+        dat = DynamicActuarialTable(plt, i=0.03)
         r = dat.axn(x=40)
         r.mean, r.std, r.ci(0.95)  # → StochasticResult
     """
 
     def __init__(
         self,
-        dynamic_lifetable: DynamicLifeTable,
+        source: ProjectedLifeTable | DynamicLifeTable,
         interest: float | InterestRate,
         name: str = "",
     ) -> None:
-        self.dynamic_lifetable = dynamic_lifetable
+        # Accept both ProjectedLifeTable and DynamicLifeTable
+        if isinstance(source, ProjectedLifeTable):
+            self._source = source
+            tables = source.tables
+            self._is_stochastic = source.is_stochastic
+        elif isinstance(source, DynamicLifeTable):
+            self._source = source
+            tables = source.tables
+            self._is_stochastic = source.is_stochastic
+        else:
+            raise TypeError(
+                f"Expected ProjectedLifeTable or DynamicLifeTable, "
+                f"got {type(source).__name__}"
+            )
+
+        # Keep backward compat attribute
+        self.dynamic_lifetable = source
+
         if isinstance(interest, (int, float)):
             interest = InterestRate(i=float(interest))
         self.interest = interest
@@ -72,7 +98,7 @@ class DynamicActuarialTable:
 
         # Pre-build one ActuarialTable per scenario
         self._ats: list[ActuarialTable] = [
-            ActuarialTable(lt, interest) for lt in dynamic_lifetable.tables
+            ActuarialTable(lt, interest) for lt in tables
         ]
 
     # ------------------------------------------------------------------ #
@@ -85,7 +111,7 @@ class DynamicActuarialTable:
         Returns float for single-path, StochasticResult for stochastic.
         """
         results = [fn(at, *args, **kwargs) for at in self._ats]
-        if not self.dynamic_lifetable.is_stochastic:
+        if not self._is_stochastic:
             return results[0]
         return StochasticResult(np.array(results, dtype=float), label=label)
 
@@ -99,11 +125,11 @@ class DynamicActuarialTable:
 
     @property
     def is_stochastic(self) -> bool:
-        return self.dynamic_lifetable.is_stochastic
+        return self._is_stochastic
 
     @property
     def n_scenarios(self) -> int:
-        return self.dynamic_lifetable.n_scenarios
+        return len(self._ats)
 
     # ------------------------------------------------------------------ #
     # Pure endowment                                                       #
@@ -240,7 +266,7 @@ class DynamicActuarialTable:
         """
         from ..reserves import reserve_recursion as _rr
 
-        if not self.is_stochastic:
+        if not self._is_stochastic:
             return _rr(self._ats[0], x=x, n=n, k=k, benefit=benefit)
 
         # For each t collect values across scenarios
@@ -272,12 +298,11 @@ class DynamicActuarialTable:
     # ------------------------------------------------------------------ #
 
     def __repr__(self) -> str:
-        lt = self.dynamic_lifetable.tables[0]
-        tag = (
-            f"stochastic, n={self.n_scenarios}"
-            if self.is_stochastic
-            else "single-path"
-        )
+        lt = self._ats[0].lifetable
+        if self._is_stochastic:
+            tag = f"stochastic, n={self.n_scenarios}"
+        else:
+            tag = "single-path"
         return (
             f"DynamicActuarialTable({tag}, "
             f"ages={lt.x_min}–{lt.omega - 1}, i={self.i:.4g})"
