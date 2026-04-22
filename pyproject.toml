@@ -1,0 +1,38 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pylifecontingencies"
+version = "0.1.0"
+description = "Life contingencies and actuarial mathematics in Python, with dynamic life tables and mortality forecasting"
+readme = "README.md"
+license = { text = "GPL-2.0" }
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.24",
+    "pandas>=2.0",
+    "scipy>=1.11",
+    "statsmodels>=0.14",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4",
+    "pytest-cov",
+    "rpy2>=3.5",
+]
+soa = ["pymort>=2.0"]
+
+[project.urls]
+Repository = "https://github.com/filipeduarte/pylifecontingencies"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pylifecontingencies"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short"
+
+[tool.coverage.run]
+source = ["src/pylifecontingencies"]
