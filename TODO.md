@@ -44,12 +44,14 @@ dat.axn(x=40, n=25)
 ```
 
 **Files to create / modify:**
+
 - `src/pylifecontingencies/dynamic/dynamic_lifetable.py` — `DynamicLifeTable` class
 - `src/pylifecontingencies/dynamic/dynamic_actuarialtable.py` — `DynamicActuarialTable` class
 - `src/pylifecontingencies/dynamic/__init__.py` — re-export new classes
 - `tests/test_dynamic_lifetable.py` — unit tests
 
 **Key design decisions:**
+
 - Single-path input → `DynamicLifeTable` wraps a plain `LifeTable` internally;
   `DynamicActuarialTable.axn()` returns a float just like the static API.
 - Multi-path (stochastic) input → stores a list of `LifeTable` objects;
@@ -73,6 +75,7 @@ dat.axn(x=40, n=25)
 ### 3. Add bundled tables from R lifecontingencies
 
 Run `scripts/convert_rda_to_parquet.py` and commit the generated parquet files:
+
 - `soa08` (2001 CSO)
 - `AM92Lt`, `AF92Lt` (UK)
 - `demoUsa`, `demoUK`, `demoIta`, `demoFrance`, `demoGermany`, `demoJapan`,
@@ -84,12 +87,23 @@ Validate each against R with `tests/test_actuarial_vs_r.py`.
 
 ## Medium priority (v2)
 
-### 4. Multi-life actuarial functions
+### 4. ~~Multi-life actuarial functions~~ ✅ DONE
 
-Joint and last-survivor statuses:
-- `axyn(at, x, y, n, status)` — joint/last-survivor annuity
-- `Axyn(at, x, y, n, status)` — joint/last-survivor insurance
-- `pxyt(lt, x, y, t, status)` — joint survival probability
+Implemented in `src/pylifecontingencies/multilife.py` with 40 unit tests
+(`tests/test_multilife.py`) + R parity tests (`tests/test_multilife_vs_r.py`).
+
+Demographic:
+
+- `pxyt(ltx, lty, x, y, t, status)` — joint/last-survivor survival probability
+- `qxyt(ltx, lty, x, y, t, status)` — joint/last-survivor death probability
+- `exyt(ltx, lty, x, y, status)` — joint/last-survivor life expectation
+
+Actuarial EPVs:
+
+- `axyn(atx, aty, x, y, n, k, status)` — joint/last-survivor annuity-due
+- `Axyn(atx, aty, x, y, n, k, status)` — joint/last-survivor insurance
+- `Exyn(atx, aty, x, y, n, status)` — joint/last-survivor pure endowment
+- `AExyn(atx, aty, x, y, n, k, status)` — joint/last-survivor endowment insurance
 
 ### 5. Multi-decrement tables (MDT)
 
