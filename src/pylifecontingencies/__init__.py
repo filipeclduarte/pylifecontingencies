@@ -56,6 +56,16 @@ from .financial import (
     convexity,
 )
 from .data import load_table, list_tables
+from .dynamic import DynamicLifeTable, DynamicActuarialTable, StochasticResult
+from .multilife import (
+    pxyt,
+    qxyt,
+    exyt,
+    axyn,
+    Axyn as Axyn_ml,  # avoid clash with single-life Axn
+    Exyn,
+    AExyn,
+)
 
 __all__ = [
     # Interest
@@ -109,4 +119,16 @@ __all__ = [
     # Data
     "load_table",
     "list_tables",
+    # Dynamic
+    "DynamicLifeTable",
+    "DynamicActuarialTable",
+    "StochasticResult",
+    # Multi-life
+    "pxyt",
+    "qxyt",
+    "exyt",
+    "axyn",
+    "Axyn_ml",
+    "Exyn",
+    "AExyn",
 ]

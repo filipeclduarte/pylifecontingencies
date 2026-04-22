@@ -49,6 +49,7 @@ src/pylifecontingencies/
 ├── actuarialtable.py    # ActuarialTable = LifeTable + InterestRate + commutation Dx/Nx/Cx/Mx/Rx
 ├── demographic.py       # pxt, qxt, dxt, mxt, Lxt, Tx, exn, mx2qx, qx2mx, getOmega
 ├── actuarial.py         # axn, Axn, Exn, IAxn, DAxn, AExn  (single-life EPVs)
+├── multilife.py         # pxyt, qxyt, exyt, axyn, Axyn, Exyn, AExyn  (two-life joint/last-survivor)
 ├── premiums.py          # net_premium, gross_premium
 ├── reserves.py          # prospective_reserve, retrospective_reserve
 ├── financial.py         # annuity, presentValue, accumulatedValue, duration, convexity
@@ -98,6 +99,27 @@ A_{x:n|}        = (Mx - Mx+n + Dx+n) / Dx     [endowment]
 e_x (curtate)   = (Nx+1) / Dx
 ```
 
+## Multi-life EPV formulas (reference)
+
+Assumes independent future lifetimes. `status` = `"joint"` (both alive) or `"last"` (at least one alive).
+
+```
+Joint-life:
+  ₜp_{xy}             = ₜpₓ · ₜp_y
+  ä_{xy:n|}           = Σ_{t=0}^{n-1} vᵗ · ₜp_{xy}
+  A_{xy:n|}           = Σ_{t=0}^{n-1} v^{t+1} · ₜp_{xy} · (1 - p_{x+t}·p_{y+t})
+  ₙE_{xy}             = vⁿ · ₙp_{xy}
+  e_{xy}              = Σ_{t≥1} ₜp_{xy}
+
+Last-survivor (inclusion-exclusion):
+  ₜp_{x̄ȳ}            = ₜpₓ + ₜp_y - ₜp_{xy}
+  ä_{x̄ȳ}             = äₓ + ä_y - ä_{xy}
+  A_{x̄ȳ}             = Aₓ + A_y - A_{xy}
+  e_{x̄ȳ}             = eₓ + e_y - e_{xy}
+
+Identity:  A_{xy} + d · ä_{xy} = 1
+```
+
 ## Bundled data
 
 `data/soa_ilt.csv` — SOA Illustrative Life Table from Bowers et al. "Actuarial Mathematics" (2nd ed., Appendix 2A). Ages 0–99, omega = 100.
@@ -123,12 +145,14 @@ The grid covers: `soa_ilt` × ages [20, 40, 60] × terms [1, 10, 20, Inf] × i [
 ## Forecasting notes
 
 **Lee-Carter (leecarter.py):**
+
 - SVD on (log(mx) - row-means) to extract ax, bx, kt
 - Convention: bx normalised so sum(bx) = 1, and kt re-centred so sum(kt) = 0 (first stage)
 - kt forecast via `statsmodels.tsa.arima.model.ARIMA(kt, order=(0,1,0))` with drift by default
 - Bootstrap: resample Pearson residuals `(log(mx) - (ax + bx * kt)) / sigma_hat`
 
 **CBD M5 (cbd.py):**
+
 - Per-year OLS of `logit(qx_t)` on `[1, (x - x_bar)]` gives `(k1_t, k2_t)`
 - x_bar = mean age over the calibration range
 - Forecast: bivariate random walk with drift fitted via OLS on lagged differences
