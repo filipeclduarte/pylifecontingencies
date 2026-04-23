@@ -46,6 +46,10 @@ dev = [
     "pytest-cov",
     "rpy2>=3.5",
     "twine>=5.0",
+    "mkdocs>=1.6.0",
+    "mkdocs-material>=9.0.0",
+    "mkdocstrings[python]>=0.25.0",
+    "mkdocs-static-i18n>=1.2.0",
 ]
 soa = ["pymort>=2.0"]
 
