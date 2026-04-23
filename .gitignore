@@ -34,6 +34,7 @@ notebooks/.ipynb_checkpoints/
 
 # Build
 *.whl
+site/
 
 # Files
 CLAUDE.md
