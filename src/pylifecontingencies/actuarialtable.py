@@ -164,11 +164,14 @@ class ActuarialTable:
         benefit: str = "term",
         n_sim: int = 10_000,
         random_state: int | np.random.Generator | None = None,
+        k: int = 1,
+        m: int = 0,
     ):
         """Monte Carlo present-value distribution for a static life-contingent benefit."""
         from .simulation import simulate_pv
         return simulate_pv(
-            self, x=x, n=n, benefit=benefit, n_sim=n_sim, random_state=random_state
+            self, x=x, n=n, benefit=benefit, n_sim=n_sim,
+            random_state=random_state, k=k, m=m,
         )
 
     def __repr__(self) -> str:

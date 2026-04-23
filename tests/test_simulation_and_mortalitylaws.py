@@ -196,6 +196,128 @@ class TestSimulatePV:
         np.testing.assert_array_equal(r_func.samples, r_meth.samples)
 
 
+    # ------------------------------------------------------------------ #
+    # k-thly (fractional) annuity payments                               #
+    # ------------------------------------------------------------------ #
+
+    def test_annuity_monthly_k12_mean_matches_closed_form(self, soa_ilt):
+        at = ActuarialTable(soa_ilt, interest=0.03)
+        result = simulate_pv(
+            at, x=40, n=20, benefit="annuity", k=12, n_sim=100_000, random_state=0
+        )
+        expected = axn(at, x=40, n=20, k=12)
+        assert math.isclose(result.mean, expected, abs_tol=0.02)
+
+    def test_annuity_whole_life_k12_matches_closed_form(self, soa_ilt):
+        at = ActuarialTable(soa_ilt, interest=0.03)
+        result = simulate_pv(
+            at, x=40, n=None, benefit="annuity", k=12, n_sim=100_000, random_state=1
+        )
+        expected = axn(at, x=40, n=None, k=12)
+        assert math.isclose(result.mean, expected, abs_tol=0.05)
+
+    def test_k_greater_than_1_non_annuity_raises(self, soa_ilt):
+        at = ActuarialTable(soa_ilt, interest=0.03)
+        with pytest.raises(ValueError, match="k > 1"):
+            simulate_pv(at, x=40, n=20, benefit="term", k=12, n_sim=100)
+
+    def test_k1_behavior_unchanged_same_seed(self, soa_ilt):
+        """k=1 must give bit-for-bit identical output to the no-k call."""
+        at = ActuarialTable(soa_ilt, interest=0.03)
+        r_default = simulate_pv(at, x=40, n=20, benefit="annuity", n_sim=500, random_state=7)
+        r_k1 = simulate_pv(at, x=40, n=20, benefit="annuity", k=1, n_sim=500, random_state=7)
+        np.testing.assert_array_equal(r_default.samples, r_k1.samples)
+
+    def test_invalid_k_raises(self, soa_ilt):
+        at = ActuarialTable(soa_ilt, interest=0.03)
+        with pytest.raises(ValueError, match="k"):
+            simulate_pv(at, x=40, n=20, benefit="annuity", k=0, n_sim=100)
+
+    # ------------------------------------------------------------------ #
+    # Deferred annuity (m > 0)                                           #
+    # ------------------------------------------------------------------ #
+
+    def test_deferred_annuity_term_matches_closed_form(self, soa_ilt):
+        """m=10 deferred 10-year annuity: _10E_x * ä_{x+10:10|}."""
+        at = ActuarialTable(soa_ilt, interest=0.03)
+        from pylifecontingencies import Exn
+        expected = Exn(at, x=40, n=10) * axn(at, x=50, n=10)
+        result = simulate_pv(
+            at, x=40, n=10, benefit="annuity", m=10, n_sim=100_000, random_state=2
+        )
+        assert math.isclose(result.mean, expected, abs_tol=0.05)
+
+    def test_deferred_whole_life_annuity_matches_closed_form(self, soa_ilt):
+        """m=10 deferred whole-life annuity: _10E_x * ä_{x+10}."""
+        at = ActuarialTable(soa_ilt, interest=0.03)
+        from pylifecontingencies import Exn
+        expected = Exn(at, x=40, n=10) * axn(at, x=50, n=None)
+        result = simulate_pv(
+            at, x=40, n=None, benefit="annuity", m=10, n_sim=100_000, random_state=3
+        )
+        assert math.isclose(result.mean, expected, abs_tol=0.05)
+
+    def test_deferred_monthly_annuity_matches_closed_form(self, soa_ilt):
+        """m=5 deferred k=12 10-year annuity: _5E_x * ä^(12)_{x+5:10|}."""
+        at = ActuarialTable(soa_ilt, interest=0.03)
+        from pylifecontingencies import Exn
+        expected = Exn(at, x=40, n=5) * axn(at, x=45, n=10, k=12)
+        result = simulate_pv(
+            at, x=40, n=10, benefit="annuity", k=12, m=5, n_sim=100_000, random_state=4
+        )
+        assert math.isclose(result.mean, expected, abs_tol=0.05)
+
+    def test_deferred_term_insurance_matches_closed_form(self, soa_ilt):
+        """m-year deferred term insurance: _mE_x * A^1_{x+m:n|}."""
+        at = ActuarialTable(soa_ilt, interest=0.03)
+        from pylifecontingencies import Axn, Exn
+        expected = Exn(at, x=40, n=10) * Axn(at, x=50, n=10)
+        result = simulate_pv(
+            at, x=40, n=10, benefit="term", m=10, n_sim=100_000, random_state=5
+        )
+        assert math.isclose(result.mean, expected, abs_tol=0.01)
+
+    def test_impossible_deferral_gives_zero_pv(self, soa_ilt):
+        """When m >= omega - x, no scenario survives deferral → all PVs = 0."""
+        at = ActuarialTable(soa_ilt, interest=0.03)
+        # x=95, omega=100 → max curtate lifetime K ≤ 4; m=5 is unreachable
+        result = simulate_pv(
+            at, x=95, n=None, benefit="annuity", m=5, n_sim=10_000, random_state=6
+        )
+        assert result.mean == 0.0
+
+    def test_invalid_m_raises(self, soa_ilt):
+        at = ActuarialTable(soa_ilt, interest=0.03)
+        with pytest.raises(ValueError, match="m"):
+            simulate_pv(at, x=40, n=20, benefit="annuity", m=-1, n_sim=100)
+
+    # ------------------------------------------------------------------ #
+    # StochasticResult.to_dataframe                                       #
+    # ------------------------------------------------------------------ #
+
+    def test_to_dataframe_columns_and_length(self, soa_ilt):
+        at = ActuarialTable(soa_ilt, interest=0.03)
+        result = simulate_pv(at, x=40, n=20, benefit="term", n_sim=500, random_state=0)
+        df = result.to_dataframe()
+        import pandas as pd
+        assert isinstance(df, pd.DataFrame)
+        assert list(df.columns) == ["pv"]
+        assert len(df) == 500
+
+    def test_to_dataframe_values_match_samples(self, soa_ilt):
+        at = ActuarialTable(soa_ilt, interest=0.03)
+        result = simulate_pv(at, x=40, n=20, benefit="term", n_sim=200, random_state=0)
+        df = result.to_dataframe()
+        np.testing.assert_array_equal(df["pv"].to_numpy(), result.samples)
+
+    def test_to_dataframe_supports_pandas_operations(self, soa_ilt):
+        at = ActuarialTable(soa_ilt, interest=0.03)
+        result = simulate_pv(at, x=40, n=20, benefit="annuity", n_sim=1000, random_state=0)
+        df = result.to_dataframe()
+        assert abs(df["pv"].mean() - result.mean) < 1e-10
+        assert df["pv"].min() >= 0.0
+
+
 class TestMortalityLaws:
 
     def test_available_mortality_laws(self):

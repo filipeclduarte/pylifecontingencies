@@ -87,6 +87,11 @@ class StochasticResult:
             "n":      float(self.n),
         }
 
+    def to_dataframe(self) -> "pd.DataFrame":
+        """Return samples as a one-column ``pandas.DataFrame`` with column ``'pv'``."""
+        import pandas as pd
+        return pd.DataFrame({"pv": self.samples})
+
     # ------------------------------------------------------------------ #
     # Operator interop                                                     #
     # ------------------------------------------------------------------ #
