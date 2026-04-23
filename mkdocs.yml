@@ -1,8 +1,8 @@
 site_name: pylifecontingencies
 site_description: Life contingencies and actuarial mathematics in Python
+site_url: https://filipeclduarte.github.io/pylifecontingencies/
 repo_url: https://github.com/filipeclduarte/pylifecontingencies
 repo_name: filipeclduarte/pylifecontingencies
-
 theme:
   name: material
   palette:
@@ -29,13 +29,19 @@ plugins:
       docs_structure: suffix
       fallback_to_default: true
       languages:
-        en:
+        - locale: en
           default: true
           name: English
           build: true
-        pt:
+        - locale: pt
           name: Português
           build: true
+          nav_translations:
+            Home: Início
+            Integration Guide: Guia de Integração
+            Showcase: Demonstração
+            Roadmap: Roadmap
+            API Reference: Referência da API
   - mkdocstrings:
       handlers:
         python:
