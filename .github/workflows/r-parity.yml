@@ -10,6 +10,8 @@ on:
 jobs:
   r-parity:
     runs-on: ubuntu-latest
+    env:
+      RPY2_CFFI_MODE: ABI
 
     steps:
       - name: Check out repository
@@ -26,14 +28,23 @@ jobs:
         with:
           r-version: "release"
 
-      - name: Install R lifecontingencies package
-        run: Rscript -e "install.packages('lifecontingencies', repos='https://cloud.r-project.org')"
+      - name: Install system libraries for R packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev libharfbuzz-dev libfribidi-dev
+
+      - name: Install R dependencies
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          packages: any::lifecontingencies
+          cache: true
 
       - name: Install package and parity dependencies
         run: |
           python -m pip install --upgrade pip
           python -m pip install -e .
-          python -m pip install pytest pytest-cov rpy2
+          python -m pip install pytest pytest-cov
+          python -m pip install rpy2
 
       - name: Run R parity tests
         run: pytest tests/test_actuarial_vs_r.py tests/test_multilife_vs_r.py -v
