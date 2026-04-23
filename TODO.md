@@ -44,32 +44,24 @@ and `DynamicLifeTable`. PI/stochastic tables return `StochasticResult`.
 
 ---
 
-### 3. Add bundled tables — BR-EMS ✅ DONE, R tables pending
+### 3. ~~Add bundled tables~~ ✅ DONE
 
-**BR-EMS (SUSEP) — ✅ DONE** (80 tests in `tests/test_br_ems.py`)
+**BR-EMS (SUSEP)** — 80 tests in `tests/test_br_ems.py`
 
-12 tables extracted from the official SUSEP Excel workbook via
-`scripts/convert_br_ems.py` → CSV files in `src/pylifecontingencies/data/`:
+12 tables via `scripts/convert_br_ems.py` → CSV in `src/pylifecontingencies/data/`:
 
-- `br_emssb_2021_m`, `br_emssb_2021_f` — BR-EMS Sobrevivência 2021 (ages 0–117/116)
-- `br_emsmt_2021_m`, `br_emsmt_2021_f` — BR-EMS Mortalidade 2021
-- `br_emssb_2015_m`, `br_emssb_2015_f` — BR-EMS Sobrevivência 2015 (ages 0–118)
-- `br_emsmt_2015_m`, `br_emsmt_2015_f` — BR-EMS Mortalidade 2015
-- `br_emssb_2010_m`, `br_emssb_2010_f` — BR-EMS Sobrevivência 2010 (ages 0–116)
-- `br_emsmt_2010_m`, `br_emsmt_2010_f` — BR-EMS Mortalidade 2010
+- `br_emssb_2021_m/f`, `br_emsmt_2021_m/f` — BR-EMS 2021 (ages 0–117/116)
+- `br_emssb_2015_m/f`, `br_emsmt_2015_m/f` — BR-EMS 2015 (ages 0–118)
+- `br_emssb_2010_m/f`, `br_emsmt_2010_m/f` — BR-EMS 2010 (ages 0–116/113)
 
-All accessible via `load_table(name)` and `list_tables()`.
+**R lifecontingencies tables** — via `scripts/convert_rda_to_parquet.py` → parquet:
 
-**R lifecontingencies tables — pending** (requires R + rpy2)
+- `soa08` — 2001 CSO (S4 lifetable, ages 0–140)
+- `AM92Lt`, `AF92Lt` — UK AM92/AF92 (S4 lifetable)
+- `demoUsa`, `demoUk`, `demoIta`, `demoFrance` — lx multi-column data.frames
+- `demoGermany`, `demoJapan`, `demoChina`, `demoCanada` — qx multi-column data.frames
 
-Run `scripts/convert_rda_to_parquet.py` and commit the generated parquet files:
-
-- `soa08` (2001 CSO)
-- `AM92Lt`, `AF92Lt` (UK)
-- `demoUsa`, `demoUK`, `demoIta`, `demoFrance`, `demoGermany`, `demoJapan`,
-  `demoChina`, `demoCanada`
-
-Validate each against R with `tests/test_actuarial_vs_r.py`.
+All accessible via `load_table(name)`, `load_table(name, column=...)`, `list_tables()`, `list_columns(name)`.
 
 ---
 
