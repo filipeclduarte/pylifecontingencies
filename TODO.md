@@ -195,19 +195,9 @@ Design notes:
 - VaR / TVaR at combined risk is the primary use case
 - File: `src/pylifecontingencies/simulation.py`
 
-### C3. VaR and TVaR on `StochasticResult`
+### ~~C3. VaR and TVaR on `StochasticResult`~~ ✅ DONE
 
-Add risk-measure methods directly on `StochasticResult` — key for Solvency II reserving.
-
-```python
-result.var(0.995)    # Value at Risk at 99.5 %
-result.tvar(0.995)   # Tail Value at Risk (Expected Shortfall) at 99.5 %
-```
-
-Formulas:
-- `VaR_α = quantile(α)`
-- `TVaR_α = E[X | X > VaR_α] = mean(samples[samples > VaR_α])`
-
-Implementation is pure NumPy on the existing `samples` array — a few lines.
-Add tests asserting `tvar(α) >= var(α)` and `tvar(0.5) ≈ mean(upper half)`.
-File: `src/pylifecontingencies/dynamic/stochastic.py`
+- `result.var(alpha)` — Value at Risk = `quantile(alpha)`
+- `result.tvar(alpha)` — Tail VaR = `E[X | X > VaR_α]`; returns `var(alpha)` on degenerate tail
+- 4 tests: `var == quantile`, `tvar >= var`, `tvar == tail_mean`, `tvar(0) >= mean`
+- File: `src/pylifecontingencies/dynamic/stochastic.py`

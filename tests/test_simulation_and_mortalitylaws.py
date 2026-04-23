@@ -154,6 +154,30 @@ class TestSimulatePV:
     # StochasticResult API                                                #
     # ------------------------------------------------------------------ #
 
+    def test_var_equals_quantile(self, soa_ilt):
+        at = ActuarialTable(soa_ilt, interest=0.03)
+        result = simulate_pv(at, x=40, n=20, benefit="term", n_sim=5000, random_state=0)
+        assert result.var(0.95) == result.quantile(0.95)
+
+    def test_tvar_exceeds_var(self, soa_ilt):
+        at = ActuarialTable(soa_ilt, interest=0.03)
+        result = simulate_pv(at, x=40, n=20, benefit="term", n_sim=5000, random_state=0)
+        assert result.tvar(0.95) >= result.var(0.95)
+
+    def test_tvar_equals_tail_mean(self, soa_ilt):
+        import numpy as np
+        at = ActuarialTable(soa_ilt, interest=0.03)
+        result = simulate_pv(at, x=40, n=20, benefit="term", n_sim=5000, random_state=0)
+        v = result.var(0.95)
+        expected = float(np.mean(result.samples[result.samples > v]))
+        assert math.isclose(result.tvar(0.95), expected)
+
+    def test_tvar_at_0_equals_mean(self, soa_ilt):
+        at = ActuarialTable(soa_ilt, interest=0.03)
+        result = simulate_pv(at, x=40, n=20, benefit="term", n_sim=5000, random_state=0)
+        # VaR(0) = min sample, so TVaR(0) ≈ mean of all samples above the minimum
+        assert result.tvar(0.0) >= result.mean - 1e-9
+
     def test_stochastic_result_summary_keys(self, soa_ilt):
         at = ActuarialTable(soa_ilt, interest=0.03)
         result = simulate_pv(at, x=40, n=20, benefit="term", n_sim=1000, random_state=0)

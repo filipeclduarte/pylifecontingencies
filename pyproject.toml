@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "pylifecontingencies"
-version = "0.3.0"
+version = "0.4.0"
 description = "Life contingencies and actuarial mathematics in Python, with dynamic life tables and mortality forecasting"
 readme = "README.md"
 license = { text = "GPL-2.0" }

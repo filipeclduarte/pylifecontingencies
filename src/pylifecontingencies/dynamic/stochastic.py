@@ -87,6 +87,26 @@ class StochasticResult:
             "n":      float(self.n),
         }
 
+    def var(self, alpha: float) -> float:
+        """
+        Value at Risk at confidence level ``alpha``.
+
+        Equal to the ``alpha``-quantile of the PV distribution.
+        """
+        return self.quantile(alpha)
+
+    def tvar(self, alpha: float) -> float:
+        """
+        Tail Value at Risk (Expected Shortfall) at confidence level ``alpha``.
+
+        ``TVaR_α = E[X | X > VaR_α]``
+
+        Returns ``var(alpha)`` when no sample exceeds it (degenerate tail).
+        """
+        v = self.var(alpha)
+        tail = self.samples[self.samples > v]
+        return float(np.mean(tail)) if len(tail) > 0 else v
+
     def to_dataframe(self) -> "pd.DataFrame":
         """Return samples as a one-column ``pandas.DataFrame`` with column ``'pv'``."""
         import pandas as pd
