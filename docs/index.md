@@ -67,7 +67,7 @@ lt_soa = load_table("soa08")
 ```python
 from pylifecontingencies import load_table, ActuarialTable, axn, qxt
 
-# BR-EMS Sobrevivencia 2021, male
+# BR-EMS Survival 2021, male
 lt_br = load_table("br_emssb_2021_m")
 at_br = ActuarialTable(lt_br, interest=0.03)
 
@@ -363,16 +363,6 @@ python scripts/convert_rda_to_parquet.py
 **Current:** Single-life EPVs, stochastic PV simulation, mortality-law fitters, interest-rate utilities, demographic functions, bundled tables, Lee-Carter and CBD M5 mortality forecasting.
 
 **Planned next:** Multi-decrement tables, Renshaw-Haberman and APC forecasting models, and broader stochastic simulation equivalents to `rLifeContingencies`.
-
-## Release status
-
-If this is the first public PyPI release, `0.1.0` is still a sensible version:
-the package already has a meaningful usable feature set, but the roadmap still
-has planned actuarial and forecasting extensions. If you want to signal “first
-public release after internal polishing”, keep `0.1.0`. If `0.1.0` was already
-published privately or tagged elsewhere, bump to `0.1.1` for this release.
-
----
 
 ## License
 

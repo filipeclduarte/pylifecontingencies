@@ -96,12 +96,14 @@ Actuarial EPVs:
 - `qxt_prime`, `qxt_fromQxprime` — independent/dependent decrements
 - `Axn_mdt` — APV of benefit on decrement j
 
-### 6. Stochastic PV simulation (rLifeContingencies equivalent) — done
+### 6. ~~Stochastic PV simulation (rLifeContingencies equivalent)~~ ✅ DONE
 
-- `simulate_pv(at, x, n, benefit, n_sim)` implemented
-- Returns `StochasticResult` with `mean`, `std`, quantiles, and full `samples`
-- Uses vectorised NumPy random draws over life-table death-year probabilities
-- Exposed both as a top-level function and `ActuarialTable.simulate_pv(...)`
+- `simulate_pv(at, x, n, benefit, n_sim, k, m)` — k-thly payments (UDD) and deferral
+- Returns `StochasticResult` with `mean`, `std`, `quantile`, `ci`, `summary`, `var`, `tvar`
+- `.hist()` — histogram with mean and 95 % CI lines; `.plot()` — empirical CDF
+- `.to_dataframe()` — pandas export with column `"pv"`
+- Exposed as top-level function and `ActuarialTable.simulate_pv(...)`
+- 55 unit tests covering all benefit types, k/m parameters, and risk metrics
 
 ### 7. Mortality law fitters — done
 

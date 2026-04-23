@@ -68,8 +68,11 @@ Implementado em `src/pylifecontingencies/multilife.py` com testes de paridade R.
 
 ### 6. ~~Simulação Estocástica de VPA~~ ✅ FEITO
 
-- `simulate_pv(at, x, n, benefit, n_sim)` implementado
-- Retorna `StochasticResult` com `mean`, `std`, quantis e as `samples` completas
+- `simulate_pv(at, x, n, benefit, n_sim, k, m)` — pagamentos fracionários (UDD) e diferimento
+- Retorna `StochasticResult` com `mean`, `std`, `quantile`, `ci`, `summary`, `var`, `tvar`
+- `.hist()` — histograma com média e IC 95 %; `.plot()` — FDA empírica
+- `.to_dataframe()` — exportação para pandas com coluna `"pv"`
+- 55 testes unitários cobrindo todos os tipos de benefício e métricas de risco
 
 ### 7. ~~Ajuste de Leis de Mortalidade~~ ✅ FEITO
 
