@@ -55,6 +55,8 @@ from .financial import (
     duration,
     convexity,
 )
+from .simulation import simulate_pv
+from .mortalitylaws import GompertzMakeham, HeligmanPollard, MortalityLawFit, fit_mortality_law
 from .data import load_table, list_tables
 from .dynamic import DynamicLifeTable, DynamicActuarialTable, StochasticResult
 from .multilife import (
@@ -116,6 +118,12 @@ __all__ = [
     "decreasingAnnuity",
     "duration",
     "convexity",
+    "simulate_pv",
+    # Mortality laws
+    "GompertzMakeham",
+    "HeligmanPollard",
+    "MortalityLawFit",
+    "fit_mortality_law",
     # Data
     "load_table",
     "list_tables",

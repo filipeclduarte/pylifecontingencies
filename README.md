@@ -20,6 +20,23 @@ pip install "pylifecontingencies[soa]"
 
 ---
 
+## Development and release
+
+GitHub Actions workflows live under `.github/workflows/`:
+
+- `ci.yml` runs the main pytest matrix on Python 3.10, 3.11, and 3.12, plus coverage and distribution builds.
+- `r-parity.yml` installs R + `lifecontingencies` and runs the parity tests that compare Python results against the R package.
+- `publish.yml` builds and publishes to PyPI on tags matching `v*` after the test suite passes.
+
+For publishing, configure GitHub Trusted Publishing for the PyPI project, then create a version tag such as:
+
+```bash
+git tag v0.1.1
+git push origin v0.1.1
+```
+
+---
+
 ## Quick start — static life table
 
 ```python
@@ -86,6 +103,56 @@ axn(at_cohort, x=40)   # cohort-true annuity at 40
 
 ---
 
+## Stochastic PV simulation
+
+```python
+from pylifecontingencies import load_table, ActuarialTable, simulate_pv
+
+lt = load_table("soa_ilt")
+at = ActuarialTable(lt, i=0.03)
+
+# Monte Carlo term-insurance PV distribution
+r = simulate_pv(at, x=40, n=20, benefit="term", n_sim=50_000, random_state=42)
+print(r.mean, r.std)
+print(r.quantile(0.95))
+
+# Same API as a convenience method on the table
+r_ann = at.simulate_pv(x=40, n=20, benefit="annuity", n_sim=10_000, random_state=42)
+```
+
+Supported benefit types: `term`, `whole` / `whole_life`, `annuity`,
+`pure_endowment`, `endowment`, `increasing`, `decreasing`.
+
+---
+
+## Mortality-law graduation
+
+```python
+import numpy as np
+from pylifecontingencies import (
+    load_table,
+    fit_mortality_law,
+    GompertzMakeham,
+    HeligmanPollard,
+)
+
+lt = load_table("soa_ilt")
+
+# String dispatch
+gm_fit = fit_mortality_law(lt, "gompertz_makeham", ages=np.arange(40, 90))
+print(gm_fit.params_dict)
+print(gm_fit.rmse, gm_fit.aic)
+
+# Explicit law object
+hp_fit = fit_mortality_law(lt, HeligmanPollard(), ages=np.arange(1, 90))
+df_fit = hp_fit.to_dataframe()
+```
+
+`MortalityLawFit` stores fitted parameters, observed/fitted `q_x`, residuals,
+and goodness-of-fit metrics (`loglik`, `AIC`, `BIC`, `RMSE`, `MAE`).
+
+---
+
 ## Interest-rate utilities
 
 ```python
@@ -146,11 +213,11 @@ python scripts/convert_rda_to_parquet.py
 
 ---
 
-## v1 scope and roadmap
+## Scope and roadmap
 
-**v1 (this release):** Single-life EPVs, interest-rate utilities, demographic functions, bundled tables, Lee-Carter and CBD M5 mortality forecasting.
+**Current:** Single-life EPVs, stochastic PV simulation, mortality-law fitters, interest-rate utilities, demographic functions, bundled tables, Lee-Carter and CBD M5 mortality forecasting.
 
-**v2 (planned):** Multi-life (joint/last-survivor), multi-decrement tables, stochastic PV simulation (`rLifeContingencies` equivalent), Renshaw-Haberman and APC forecasting models, mortality-law fitters (Gompertz, Makeham, Heligman-Pollard).
+**Planned next:** Multi-decrement tables, Renshaw-Haberman and APC forecasting models, and broader stochastic simulation equivalents to `rLifeContingencies`.
 
 ---
 

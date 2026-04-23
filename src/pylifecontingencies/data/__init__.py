@@ -14,7 +14,23 @@ from ..fractional import FractionalAge
 _DATA_DIR = Path(__file__).parent
 
 _BUILTIN_TABLES = {
+    # SOA Illustrative Life Table (Bowers et al., ages 0–99)
     "soa_ilt": "soa_ilt.csv",
+    # BR-EMS 2021 (ages 0–117/116)
+    "br_emssb_2021_m": "br_emssb_2021_m.csv",
+    "br_emssb_2021_f": "br_emssb_2021_f.csv",
+    "br_emsmt_2021_m": "br_emsmt_2021_m.csv",
+    "br_emsmt_2021_f": "br_emsmt_2021_f.csv",
+    # BR-EMS 2015 (ages 0–119)
+    "br_emssb_2015_m": "br_emssb_2015_m.csv",
+    "br_emssb_2015_f": "br_emssb_2015_f.csv",
+    "br_emsmt_2015_m": "br_emsmt_2015_m.csv",
+    "br_emsmt_2015_f": "br_emsmt_2015_f.csv",
+    # BR-EMS 2010 (ages 0–116/113)
+    "br_emssb_2010_m": "br_emssb_2010_m.csv",
+    "br_emssb_2010_f": "br_emssb_2010_f.csv",
+    "br_emsmt_2010_m": "br_emsmt_2010_m.csv",
+    "br_emsmt_2010_f": "br_emsmt_2010_f.csv",
 }
 
 
@@ -31,6 +47,12 @@ def load_table(
         Table identifier. Built-in tables:
 
         - ``"soa_ilt"`` — SOA Illustrative Life Table (Bowers et al., ages 0–99)
+        - ``"br_emssb_2021_m"`` / ``"br_emssb_2021_f"`` — BR-EMS Sobrevivência 2021
+        - ``"br_emsmt_2021_m"`` / ``"br_emsmt_2021_f"`` — BR-EMS Mortalidade 2021
+        - ``"br_emssb_2015_m"`` / ``"br_emssb_2015_f"`` — BR-EMS Sobrevivência 2015
+        - ``"br_emsmt_2015_m"`` / ``"br_emsmt_2015_f"`` — BR-EMS Mortalidade 2015
+        - ``"br_emssb_2010_m"`` / ``"br_emssb_2010_f"`` — BR-EMS Sobrevivência 2010
+        - ``"br_emsmt_2010_m"`` / ``"br_emsmt_2010_f"`` — BR-EMS Mortalidade 2010
 
         Additional tables (AM92, AF92, soa08, demoUsa, …) can be added by
         running ``scripts/convert_rda_to_parquet.py``, which produces

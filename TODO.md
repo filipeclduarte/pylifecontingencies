@@ -44,7 +44,23 @@ and `DynamicLifeTable`. PI/stochastic tables return `StochasticResult`.
 
 ---
 
-### 3. Add bundled tables from R lifecontingencies
+### 3. Add bundled tables — BR-EMS ✅ DONE, R tables pending
+
+**BR-EMS (SUSEP) — ✅ DONE** (80 tests in `tests/test_br_ems.py`)
+
+12 tables extracted from the official SUSEP Excel workbook via
+`scripts/convert_br_ems.py` → CSV files in `src/pylifecontingencies/data/`:
+
+- `br_emssb_2021_m`, `br_emssb_2021_f` — BR-EMS Sobrevivência 2021 (ages 0–117/116)
+- `br_emsmt_2021_m`, `br_emsmt_2021_f` — BR-EMS Mortalidade 2021
+- `br_emssb_2015_m`, `br_emssb_2015_f` — BR-EMS Sobrevivência 2015 (ages 0–118)
+- `br_emsmt_2015_m`, `br_emsmt_2015_f` — BR-EMS Mortalidade 2015
+- `br_emssb_2010_m`, `br_emssb_2010_f` — BR-EMS Sobrevivência 2010 (ages 0–116)
+- `br_emsmt_2010_m`, `br_emsmt_2010_f` — BR-EMS Mortalidade 2010
+
+All accessible via `load_table(name)` and `list_tables()`.
+
+**R lifecontingencies tables — pending** (requires R + rpy2)
 
 Run `scripts/convert_rda_to_parquet.py` and commit the generated parquet files:
 
@@ -83,18 +99,20 @@ Actuarial EPVs:
 - `qxt_prime`, `qxt_fromQxprime` — independent/dependent decrements
 - `Axn_mdt` — APV of benefit on decrement j
 
-### 6. Stochastic PV simulation (rLifeContingencies equivalent)
+### 6. Stochastic PV simulation (rLifeContingencies equivalent) — done
 
-- `simulate_pv(at, x, n, benefit, n_sim)` — Monte Carlo PV distribution
-- Returns mean, std, full sample vector
-- Uses vectorised NumPy random draws over lx probabilities
+- `simulate_pv(at, x, n, benefit, n_sim)` implemented
+- Returns `StochasticResult` with `mean`, `std`, quantiles, and full `samples`
+- Uses vectorised NumPy random draws over life-table death-year probabilities
+- Exposed both as a top-level function and `ActuarialTable.simulate_pv(...)`
 
-### 7. Mortality law fitters
+### 7. Mortality law fitters — done
 
-- `GompertzMakeham(mu_x = A + B*c^x)` — MLE fit to qx data
-- `HeligmanPollard` — 8-parameter model
-- `fit_mortality_law(lt, law, ages)` → fitted parameters + goodness-of-fit
-- Complement to the `dynamic/` module for parametric graduation
+- `GompertzMakeham(mu_x = A + B*c^x)` implemented with MLE fit to `q_x`
+- `HeligmanPollard` implemented as an 8-parameter graduation model
+- `fit_mortality_law(lt, law, ages)` implemented with string or object dispatch
+- Returns `MortalityLawFit` with fitted parameters, observed/fitted `q_x`, residuals, and GOF metrics
+- Complements the `dynamic/` module for parametric graduation
 
 ---
 
@@ -122,8 +140,8 @@ for better accuracy at high k (monthly, continuous):
 - `abar_x`, `Abar_x` — continuous equivalents (δ as force of interest)
 - `axn(at, x, k=inf)` — limiting case using `delta` instead of `i^(m)`
 
-### 11. CI/CD and publishing
+### 11. CI/CD and publishing — done (first version)
 
-- GitHub Actions workflow: `pytest` + `pytest --cov` on push
-- rpy2 parity job on a matrix that installs R + lifecontingencies
-- Publish to PyPI on tag via `python -m build` + `twine upload`
+- GitHub Actions `ci.yml`: pytest matrix on Python 3.10, 3.11, and 3.12, plus coverage and build checks
+- GitHub Actions `r-parity.yml`: installs R + `lifecontingencies` and runs the R parity tests
+- GitHub Actions `publish.yml`: runs tests, builds distributions, and publishes to PyPI on `v*` tags via Trusted Publishing
