@@ -98,12 +98,14 @@ Actuarial EPVs:
 
 ### 6. ~~Stochastic PV simulation (rLifeContingencies equivalent)~~ ✅ DONE
 
-- `simulate_pv(at, x, n, benefit, n_sim, deferred, k)` implemented (supports deferral and fractional frequencies)
-- Returns `StochasticResult` with `mean`, `std`, quantiles, and full `samples`
-- Includes `.plot()`, `.hist()`, and `.to_dataframe()` on the result object for easy analysis
+- `simulate_pv(at, x, n, benefit, n_sim, k, m)` implemented (supports k-thly payments and deferral)
+- Returns `StochasticResult` with `mean`, `std`, quantiles, `ci()`, `summary()`, and full `samples`
+- `.to_dataframe()` — pandas export (column `"pv"`)
+- `.hist(bins, ax, ci)` — histogram with mean and 95 % CI lines; returns Axes
+- `.plot(ax)` — empirical CDF; returns Axes
 - Uses vectorised NumPy random draws over life-table death-year probabilities
 - Exposed both as a top-level function and `ActuarialTable.simulate_pv(...)`
-- Validated against deterministic closed-form actuarial formulas with full test coverage
+- Validated against deterministic closed-form actuarial formulas with 51 unit tests
 
 ### 7. Mortality law fitters — done
 
@@ -144,3 +146,68 @@ for better accuracy at high k (monthly, continuous):
 - GitHub Actions `ci.yml`: pytest matrix on Python 3.10, 3.11, and 3.12, plus coverage and build checks
 - GitHub Actions `r-parity.yml`: installs R + `lifecontingencies` and runs the R parity tests
 - GitHub Actions `publish.yml`: runs tests, builds distributions, and publishes to PyPI on `v*` tags via Trusted Publishing
+
+---
+
+## Open tasks — simulation roadmap
+
+### A9. R-parity test for `simulate_pv`
+
+Add a test in `tests/test_actuarial_vs_r.py` that calls R's `rLifeContingencies::simulatePV()`
+via `rpy2` and asserts that `simulate_pv(...).mean` matches the R mean within a Monte Carlo
+tolerance (e.g. `abs_tol=0.05` with `n_sim=50_000`).
+
+- Requires R package `rLifeContingencies` (separate from `lifecontingencies`)
+- Cover at minimum: `term`, `whole`, `annuity` × ages [30, 50] × i [0.03, 0.06]
+- Skip automatically when `rpy2` or R is not available (same pattern as existing parity tests)
+- File: `tests/test_actuarial_vs_r.py`
+
+### C1. Multi-life stochastic simulation — `simulate_pv_joint()`
+
+Extend Monte Carlo PV to joint and last-survivor contracts.
+
+```python
+simulate_pv_joint(atx, aty, x, y, n, benefit, status, n_sim, k, m)
+```
+
+- Sample joint curtate lifetimes `(K_x, K_y)` independently from each table's PMF
+- Derived curtate lifetime: `K_xy = min(K_x, K_y)` (joint), `K_xy = max(K_x, K_y)` (last)
+- Reuse `_pv_from_death_years` / `_pv_annuity_kthly` with `K_xy`
+- Returns `StochasticResult`; expose as `ActuarialTable.simulate_pv_joint(aty, y, ...)`
+- Validate against `axyn`, `Axyn`, `Exyn` closed-form formulas
+- File: `src/pylifecontingencies/simulation.py` + `tests/test_simulation_and_mortalitylaws.py`
+
+### C2. Stochastic interest rate
+
+Allow `simulate_pv` to accept a callable or array for the interest rate so that
+both mortality and interest-rate risk can be modelled simultaneously.
+
+```python
+# Example interfaces
+simulate_pv(at, x=40, n=20, benefit="annuity", interest=lambda rng: rng.normal(0.03, 0.005))
+simulate_pv(at, x=40, n=20, benefit="annuity", interest=np.array([...]))  # pre-drawn rates
+```
+
+Design notes:
+- When `interest` is callable, draw one rate per simulation path; rebuild `v = 1/(1+i)` per path
+- When `interest` is a 1-D array of length `n_sim`, zip with the mortality draws
+- `at.interest` continues to serve as the default (scalar) rate
+- VaR / TVaR at combined risk is the primary use case
+- File: `src/pylifecontingencies/simulation.py`
+
+### C3. VaR and TVaR on `StochasticResult`
+
+Add risk-measure methods directly on `StochasticResult` — key for Solvency II reserving.
+
+```python
+result.var(0.995)    # Value at Risk at 99.5 %
+result.tvar(0.995)   # Tail Value at Risk (Expected Shortfall) at 99.5 %
+```
+
+Formulas:
+- `VaR_α = quantile(α)`
+- `TVaR_α = E[X | X > VaR_α] = mean(samples[samples > VaR_α])`
+
+Implementation is pure NumPy on the existing `samples` array — a few lines.
+Add tests asserting `tvar(α) >= var(α)` and `tvar(0.5) ≈ mean(upper half)`.
+File: `src/pylifecontingencies/dynamic/stochastic.py`

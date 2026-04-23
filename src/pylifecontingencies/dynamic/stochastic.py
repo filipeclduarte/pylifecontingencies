@@ -93,6 +93,97 @@ class StochasticResult:
         return pd.DataFrame({"pv": self.samples})
 
     # ------------------------------------------------------------------ #
+    # Visualisation                                                        #
+    # ------------------------------------------------------------------ #
+
+    def hist(
+        self,
+        bins: int = 50,
+        ax: "Axes | None" = None,
+        ci: bool = True,
+        **kwargs,
+    ) -> "Axes":
+        """
+        Histogram of the PV distribution.
+
+        Parameters
+        ----------
+        bins : int
+            Number of histogram bins (default 50).
+        ax : matplotlib Axes or None
+            Axes to draw on; a new figure is created when ``None``.
+        ci : bool
+            If True, draw vertical lines for the mean and 95 % CI.
+        **kwargs
+            Forwarded to ``ax.hist()``.
+
+        Returns
+        -------
+        matplotlib.axes.Axes
+        """
+        import matplotlib.pyplot as plt
+
+        if ax is None:
+            _, ax = plt.subplots()
+
+        kwargs.setdefault("edgecolor", "white")
+        ax.hist(self.samples, bins=bins, **kwargs)
+
+        if ci:
+            lo, hi = self.ci(0.95)
+            ax.axvline(self.mean, color="crimson", linestyle="--",
+                       linewidth=1.5, label=f"mean = {self.mean:.4f}")
+            ax.axvline(lo, color="steelblue", linestyle=":",
+                       linewidth=1.2, label=f"p5 = {lo:.4f}")
+            ax.axvline(hi, color="steelblue", linestyle=":",
+                       linewidth=1.2, label=f"p95 = {hi:.4f}")
+            ax.legend(fontsize=8)
+
+        ax.set_title(self.label or "PV Distribution")
+        ax.set_xlabel("Present Value")
+        ax.set_ylabel("Frequency")
+        return ax
+
+    def plot(
+        self,
+        ax: "Axes | None" = None,
+        **kwargs,
+    ) -> "Axes":
+        """
+        Empirical CDF of the PV distribution.
+
+        Draws the step-wise ECDF and a dashed vertical line at the mean.
+
+        Parameters
+        ----------
+        ax : matplotlib Axes or None
+            Axes to draw on; a new figure is created when ``None``.
+        **kwargs
+            Forwarded to ``ax.plot()``.
+
+        Returns
+        -------
+        matplotlib.axes.Axes
+        """
+        import matplotlib.pyplot as plt
+
+        if ax is None:
+            _, ax = plt.subplots()
+
+        sorted_s = np.sort(self.samples)
+        cdf = np.arange(1, self.n + 1) / self.n
+
+        kwargs.setdefault("drawstyle", "steps-post")
+        ax.plot(sorted_s, cdf, **kwargs)
+        ax.axvline(self.mean, color="crimson", linestyle="--",
+                   linewidth=1.5, label=f"mean = {self.mean:.4f}")
+        ax.legend(fontsize=8)
+        ax.set_title(self.label or "Empirical CDF")
+        ax.set_xlabel("Present Value")
+        ax.set_ylabel("Cumulative Probability")
+        return ax
+
+    # ------------------------------------------------------------------ #
     # Operator interop                                                     #
     # ------------------------------------------------------------------ #
 

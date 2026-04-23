@@ -317,6 +317,87 @@ class TestSimulatePV:
         assert abs(df["pv"].mean() - result.mean) < 1e-10
         assert df["pv"].min() >= 0.0
 
+    # ------------------------------------------------------------------ #
+    # StochasticResult.hist and .plot                                     #
+    # ------------------------------------------------------------------ #
+
+    def test_hist_returns_axes(self, soa_ilt):
+        import matplotlib
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+        from matplotlib.axes import Axes
+
+        at = ActuarialTable(soa_ilt, interest=0.03)
+        result = simulate_pv(at, x=40, n=20, benefit="term", n_sim=500, random_state=0)
+        ax = result.hist()
+        assert isinstance(ax, Axes)
+        plt.close("all")
+
+    def test_hist_accepts_external_axes(self, soa_ilt):
+        import matplotlib
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+        from matplotlib.axes import Axes
+
+        at = ActuarialTable(soa_ilt, interest=0.03)
+        result = simulate_pv(at, x=40, n=20, benefit="annuity", n_sim=500, random_state=0)
+        _, ax_in = plt.subplots()
+        ax_out = result.hist(ax=ax_in)
+        assert ax_out is ax_in
+        plt.close("all")
+
+    def test_hist_ci_false_draws_no_vlines(self, soa_ilt):
+        import matplotlib
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+
+        at = ActuarialTable(soa_ilt, interest=0.03)
+        result = simulate_pv(at, x=40, n=20, benefit="term", n_sim=500, random_state=0)
+        ax = result.hist(ci=False)
+        # With ci=False the legend should be empty (no vlines added)
+        legend = ax.get_legend()
+        assert legend is None or len(legend.get_texts()) == 0
+        plt.close("all")
+
+    def test_plot_returns_axes(self, soa_ilt):
+        import matplotlib
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+        from matplotlib.axes import Axes
+
+        at = ActuarialTable(soa_ilt, interest=0.03)
+        result = simulate_pv(at, x=40, n=20, benefit="term", n_sim=500, random_state=0)
+        ax = result.plot()
+        assert isinstance(ax, Axes)
+        plt.close("all")
+
+    def test_plot_accepts_external_axes(self, soa_ilt):
+        import matplotlib
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+
+        at = ActuarialTable(soa_ilt, interest=0.03)
+        result = simulate_pv(at, x=40, n=20, benefit="annuity", n_sim=500, random_state=0)
+        _, ax_in = plt.subplots()
+        ax_out = result.plot(ax=ax_in)
+        assert ax_out is ax_in
+        plt.close("all")
+
+    def test_plot_ecdf_bounds(self, soa_ilt):
+        """ECDF y-values must be in (0, 1]."""
+        import matplotlib
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+
+        at = ActuarialTable(soa_ilt, interest=0.03)
+        result = simulate_pv(at, x=40, n=20, benefit="annuity", n_sim=200, random_state=0)
+        ax = result.plot()
+        line = ax.get_lines()[0]
+        y = line.get_ydata()
+        assert y.min() > 0.0
+        assert y.max() <= 1.0
+        plt.close("all")
+
 
 class TestMortalityLaws:
 
