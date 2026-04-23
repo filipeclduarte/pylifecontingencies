@@ -10,7 +10,7 @@
 *   **Environment Independence**: Pure Python implementation (NumPy + Pandas). R is only used in the testing suite for result validation.
 *   **Mortality Forecasting**: Includes modules for Lee-Carter and CBD (M5) models, enabling the creation of projected tables and cohort analysis.
 *   **Built-in Data**: Contains standard SOA tables and Brazilian tables **BR-EMS (2010, 2015, and 2021)**.
-*   **Stochastic Simulation**: Monte Carlo simulation of Actuarial Present Values (APV) with support for k-thly payment frequency, deferral period, and pandas export via `StochasticResult.to_dataframe()`.
+*   **Stochastic Simulation**: Monte Carlo simulation of Actuarial Present Values (APV) — k-thly payment frequency, deferral, visualisation (`hist`, `plot`), risk metrics (`var`, `tvar`), and pandas export via `StochasticResult`.
 
 ---
 
@@ -33,7 +33,7 @@ vpa_annuity = axn(at, x=40)
 vpa_insurance = Axn(at, x=40, n=20)
 ```
 
-### Stochastic PV Simulation — Monthly Annuity and Deferral
+### Stochastic PV Simulation — Monthly Annuity, Risk Metrics, and Visualisation
 
 ```python
 from pylifecontingencies import load_table, ActuarialTable, simulate_pv
@@ -46,10 +46,17 @@ r = simulate_pv(at, x=40, n=20, benefit="annuity", k=12, m=10, n_sim=100_000, ra
 print(r.mean, r.std)
 lo, hi = r.ci(0.95)
 
-# Pandas export for custom analysis or visualisation
+# Visualisation
+r.hist()      # histogram with mean and 95 % CI lines
+r.plot()      # empirical CDF
+
+# Risk metrics for Solvency II reserving
+r.var(0.995)   # Value at Risk at 99.5 %
+r.tvar(0.995)  # Tail VaR (Expected Shortfall) at 99.5 %
+
+# Pandas export for custom analysis
 df = r.to_dataframe()
 df["pv"].describe()
-df["pv"].hist(bins=30)
 ```
 
 ### Dynamic Forecasting with Lee-Carter

@@ -11,7 +11,7 @@ Não requer o ambiente R. Funciona puramente com NumPy + Pandas; o `rpy2` é usa
 - Valores presentes atuariais para uma vida: anuidades, seguros, dotações, benefícios crescentes/decrescentes, prêmios e reservas
 - Funções demográficas e de mortalidade: `pxt`, `qxt`, `mxt`, `Lxt`, `Tx`, `exn`
 - Projeção de mortalidade dinâmica: Lee-Carter, CBD M5, tábuas de vida projetadas, suporte a cenários estocásticos
-- Simulação de Monte Carlo para VPA via `StochasticResult` — suporta frequência de pagamentos fracionária (`k`), período de diferimento (`m`) e exportação para pandas
+- Simulação de Monte Carlo para VPA via `StochasticResult` — pagamentos fracionários (`k`), diferimento (`m`), exportação pandas, visualização (`hist`, `plot`) e métricas de risco (`var`, `tvar`)
 - Graduação paramétrica de mortalidade com `GompertzMakeham` e `HeligmanPollard`
 - Dados embutidos: SOA ILT, tábuas **BR-EMS** e tábuas R convertidas para parquet (ex: `soa08`, `AM92Lt`, `demoUsa`)
 
@@ -83,6 +83,14 @@ r_mensal = simulate_pv(at, x=40, n=20, benefit="annuity", k=12, n_sim=50_000)
 
 # Anuidade vitalícia com diferimento de 10 anos (previdência)
 r_diferido = simulate_pv(at, x=40, benefit="annuity", m=10, n_sim=50_000)
+
+# Visualização
+r.hist()           # histograma com média e IC 95 %
+r.plot()           # FDA empírica
+
+# Métricas de risco (Solvência II)
+r.var(0.995)       # Value at Risk a 99,5 %
+r.tvar(0.995)      # Tail VaR (Expected Shortfall) a 99,5 %
 
 # Exportar amostras para pandas
 df = r.to_dataframe()   # DataFrame com coluna "pv"

@@ -10,7 +10,7 @@ O `pylifecontingencies` é uma implementação nativa em Python das funcionalida
 *   **Independência de Ambiente**: Implementação puramente em Python (NumPy + Pandas). O R é utilizado apenas na suíte de testes para validação de resultados.
 *   **Projeção de Mortalidade**: Inclui módulos para modelos de Lee-Carter e CBD (M5), permitindo a criação de tábuas projetadas e análises de coorte.
 *   **Dados Integrados**: Contém tábuas padrão da SOA e tábuas brasileiras **BR-EMS (2010, 2015 e 2021)**.
-*   **Simulação Estocástica**: Simulação de Monte Carlo do VPA com suporte a frequência de pagamentos fracionária (`k`), período de diferimento (`m`) e exportação para pandas via `StochasticResult.to_dataframe()`.
+*   **Simulação Estocástica**: Simulação de Monte Carlo do VPA — pagamentos fracionários (`k`), diferimento (`m`), visualização (`hist`, `plot`), métricas de risco (`var`, `tvar`) e exportação para pandas via `StochasticResult`.
 
 ---
 
@@ -33,7 +33,7 @@ vpa_anuidade = axn(at, x=40)
 vpa_seguro = Axn(at, x=40, n=20)
 ```
 
-### Simulação Estocástica — Anuidade Mensal e Diferimento
+### Simulação Estocástica — Anuidade Mensal, Métricas de Risco e Visualização
 
 ```python
 from pylifecontingencies import load_table, ActuarialTable, simulate_pv
@@ -46,10 +46,17 @@ r = simulate_pv(at, x=40, n=20, benefit="annuity", k=12, m=10, n_sim=100_000, ra
 print(r.mean, r.std)
 lo, hi = r.ci(0.95)
 
+# Visualização
+r.hist()      # histograma com média e linhas de IC 95 %
+r.plot()      # FDA empírica
+
+# Métricas de risco para Solvência II
+r.var(0.995)   # Value at Risk a 99,5 %
+r.tvar(0.995)  # Tail VaR (Expected Shortfall) a 99,5 %
+
 # Exportar para pandas
 df = r.to_dataframe()
 df["pv"].describe()
-df["pv"].hist(bins=30)
 ```
 
 ### Utilização de Tábuas Brasileiras (BR-EMS)

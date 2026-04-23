@@ -11,7 +11,7 @@ No R runtime required. Pure NumPy + pandas at install time; `rpy2` is only used 
 - Single-life actuarial present values: annuities, insurances, endowments, increasing/decreasing benefits, premiums, and reserves
 - Mortality and demographic utilities: `pxt`, `qxt`, `mxt`, `Lxt`, `Tx`, `exn`
 - Dynamic mortality forecasting: Lee-Carter, CBD M5, projected life tables, stochastic scenario support
-- Monte Carlo PV simulation with full sample output via `StochasticResult` — supports k-thly payment frequency, deferral period, and pandas export
+- Monte Carlo PV simulation via `StochasticResult` — k-thly payments, deferral, pandas export, visualisation (`hist`, `plot`), and risk metrics (`var`, `tvar`)
 - Parametric mortality graduation with `GompertzMakeham` and `HeligmanPollard`
 - Bundled data: SOA ILT, BR-EMS tables, and R-sourced parquet tables such as `soa08`, `AM92Lt`, `AF92Lt`, `demoUsa`, and `demoGermany`
 
@@ -89,6 +89,14 @@ r_monthly = simulate_pv(at, x=40, n=20, benefit="annuity", k=12, n_sim=50_000)
 
 # 10-year deferred whole-life annuity
 r_deferred = simulate_pv(at, x=40, benefit="annuity", m=10, n_sim=50_000)
+
+# Visualisation
+r.hist()          # histogram with mean and 95 % CI lines
+r.plot()          # empirical CDF
+
+# Risk metrics (Solvency II)
+r.var(0.995)      # Value at Risk at 99.5 %
+r.tvar(0.995)     # Tail VaR (Expected Shortfall) at 99.5 %
 
 # Export samples to pandas
 df = r.to_dataframe()   # DataFrame with column "pv"
@@ -210,6 +218,14 @@ r_deferred = simulate_pv(at, x=40, benefit="annuity", m=10, n_sim=50_000)
 
 # Monthly pension starting in 10 years (k and m combined)
 r_pension = simulate_pv(at, x=40, n=20, benefit="annuity", k=12, m=10, n_sim=50_000)
+
+# Visualisation
+r.hist()           # histogram with mean and 95 % CI lines
+r.plot()           # empirical CDF (step-wise)
+
+# Risk metrics (Solvency II / reserving)
+r.var(0.995)       # Value at Risk at 99.5 %
+r.tvar(0.995)      # Tail VaR (Expected Shortfall) at 99.5 %
 
 # Export samples to pandas
 df = r.to_dataframe()   # DataFrame with column "pv"

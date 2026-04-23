@@ -11,7 +11,7 @@ No R runtime required. Pure NumPy + pandas at install time; `rpy2` is only used 
 - Single-life actuarial present values: annuities, insurances, endowments, increasing/decreasing benefits, premiums, and reserves
 - Mortality and demographic utilities: `pxt`, `qxt`, `mxt`, `Lxt`, `Tx`, `exn`
 - Dynamic mortality forecasting: Lee-Carter, CBD M5, projected life tables, stochastic scenario support
-- Monte Carlo PV simulation with full sample output via `StochasticResult`
+- Monte Carlo PV simulation via `StochasticResult` — k-thly payments, deferral, `hist`/`plot` visualisation, `var`/`tvar` risk metrics, pandas export
 - Parametric mortality graduation with `GompertzMakeham` and `HeligmanPollard`
 - Bundled data: SOA ILT, BR-EMS tables, and R-sourced parquet tables such as `soa08`, `AM92Lt`, `AF92Lt`, `demoUsa`, and `demoGermany`
 
@@ -89,6 +89,14 @@ r_monthly = simulate_pv(at, x=40, n=20, benefit="annuity", k=12, n_sim=50_000)
 
 # 10-year deferred whole-life annuity (pension starting at age 50)
 r_deferred = simulate_pv(at, x=40, benefit="annuity", m=10, n_sim=50_000)
+
+# Visualisation
+r.hist()          # histogram with mean and 95 % CI lines
+r.plot()          # empirical CDF
+
+# Risk metrics (Solvency II)
+r.var(0.995)      # Value at Risk at 99.5 %
+r.tvar(0.995)     # Tail VaR (Expected Shortfall) at 99.5 %
 
 # Export samples to pandas for custom analysis
 df = r.to_dataframe()   # DataFrame with column "pv"
@@ -357,7 +365,7 @@ python scripts/convert_rda_to_parquet.py
 
 ## Scope and roadmap
 
-**Current:** Single-life EPVs, stochastic PV simulation (k-thly payments, deferral, pandas export), mortality-law fitters, interest-rate utilities, demographic functions, bundled tables, Lee-Carter and CBD M5 mortality forecasting.
+**Current:** Single-life EPVs, stochastic PV simulation (k-thly payments, deferral, visualisation, VaR/TVaR, pandas export), mortality-law fitters, interest-rate utilities, demographic functions, bundled tables, Lee-Carter and CBD M5 mortality forecasting.
 
 **Planned next:** Multi-decrement tables, Renshaw-Haberman and APC forecasting models, and broader stochastic simulation equivalents to `rLifeContingencies`.
 
