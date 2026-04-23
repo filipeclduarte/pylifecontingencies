@@ -29,11 +29,11 @@ plugins:
       docs_structure: suffix
       fallback_to_default: true
       languages:
-        - locale: en
+        en:
           default: true
           name: English
           build: true
-        - locale: pt
+        pt:
           name: Português
           build: true
   - mkdocstrings:
