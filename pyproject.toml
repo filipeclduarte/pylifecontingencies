@@ -9,26 +9,61 @@ description = "Life contingencies and actuarial mathematics in Python, with dyna
 readme = "README.md"
 license = { text = "GPL-2.0" }
 requires-python = ">=3.10"
+authors = [
+    { name = "Filipe Duarte" },
+]
+keywords = [
+    "actuarial",
+    "life contingencies",
+    "mortality",
+    "survival analysis",
+    "life tables",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Financial and Insurance Industry",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Office/Business :: Financial",
+]
 dependencies = [
     "numpy>=1.24",
     "pandas>=2.0",
+    "pyarrow>=14.0",
     "scipy>=1.11",
     "statsmodels>=0.14",
 ]
 
 [project.optional-dependencies]
 dev = [
+    "build>=1.2",
     "pytest>=7.4",
     "pytest-cov",
     "rpy2>=3.5",
+    "twine>=5.0",
 ]
 soa = ["pymort>=2.0"]
 
 [project.urls]
+Homepage = "https://github.com/filipeclduarte/pylifecontingencies"
 Repository = "https://github.com/filipeclduarte/pylifecontingencies"
+Issues = "https://github.com/filipeclduarte/pylifecontingencies/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/pylifecontingencies"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/src/pylifecontingencies",
+    "/tests",
+    "/README.md",
+    "/LICENSE",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

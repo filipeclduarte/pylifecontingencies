@@ -63,6 +63,11 @@ and `DynamicLifeTable`. PI/stochastic tables return `StochasticResult`.
 
 All accessible via `load_table(name)`, `load_table(name, column=...)`, `list_tables()`, `list_columns(name)`.
 
+Loader coverage:
+
+- `tests/test_r_tables_loader.py` covers `list_columns()` and `load_table(..., column=...)`
+- `tests/test_actuarial_vs_r.py` covers core actuarial parity against R
+
 ---
 
 ## Medium priority (v2)

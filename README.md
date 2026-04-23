@@ -190,10 +190,37 @@ exn(lt, x=40)         # e_40  (curtate)
 |------|-------------|
 | `soa_ilt` | SOA Illustrative Life Table (Bowers et al., ages 0–99) |
 
+R-sourced parquet tables are also bundled, including `soa08`, `AM92Lt`,
+`AF92Lt`, `demoUsa`, `demoUk`, `demoFrance`, `demoIta`, `demoGermany`,
+`demoJapan`, `demoChina`, and `demoCanada`.
+
+### Multi-column R tables
+
+Some bundled parquet datasets contain several sub-tables in one file. Use
+`list_columns(name)` to inspect the available columns and `load_table(..., column=...)`
+to select one:
+
+```python
+from pylifecontingencies import load_table, list_columns
+
+list_columns("demoUsa")
+# ['USSS2007M', 'USSS2007F', 'USSS2000M', 'USSS2000F', 'USSS1990M', 'USSS1990F']
+
+lt_usa = load_table("demoUsa", column="USSS2007M")
+lt_ger = load_table("demoGermany", column="qxMale")
+```
+
+Single-column parquet tables such as `soa08`, `AM92Lt`, and `AF92Lt` can be loaded
+directly:
+
+```python
+lt = load_table("soa08")
+```
+
 Additional tables (AM92, AF92, demoUsa, etc.) can be imported from R using the provided conversion script:
 
 ```bash
-# requires R + lifecontingencies + rpy2
+# requires R + lifecontingencies + rpy2 + pyarrow
 python scripts/convert_rda_to_parquet.py
 ```
 
