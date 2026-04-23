@@ -11,7 +11,7 @@ No R runtime required. Pure NumPy + pandas at install time; `rpy2` is only used 
 - Single-life actuarial present values: annuities, insurances, endowments, increasing/decreasing benefits, premiums, and reserves
 - Mortality and demographic utilities: `pxt`, `qxt`, `mxt`, `Lxt`, `Tx`, `exn`
 - Dynamic mortality forecasting: Lee-Carter, CBD M5, projected life tables, stochastic scenario support
-- Monte Carlo PV simulation with full sample output via `StochasticResult`
+- Monte Carlo PV simulation with full sample output via `StochasticResult` — supports k-thly payment frequency, deferral period, and pandas export
 - Parametric mortality graduation with `GompertzMakeham` and `HeligmanPollard`
 - Bundled data: SOA ILT, BR-EMS tables, and R-sourced parquet tables such as `soa08`, `AM92Lt`, `AF92Lt`, `demoUsa`, and `demoGermany`
 
@@ -80,8 +80,18 @@ axn(at_br, x=65)         # whole-life annuity-due at age 65
 ```python
 from pylifecontingencies import simulate_pv
 
+# Annual term insurance
 r = simulate_pv(at, x=40, n=20, benefit="term", n_sim=50_000, random_state=42)
 r.mean, r.std, r.quantile(0.95)
+
+# Monthly annuity (k=12)
+r_monthly = simulate_pv(at, x=40, n=20, benefit="annuity", k=12, n_sim=50_000)
+
+# 10-year deferred whole-life annuity
+r_deferred = simulate_pv(at, x=40, benefit="annuity", m=10, n_sim=50_000)
+
+# Export samples to pandas
+df = r.to_dataframe()   # DataFrame with column "pv"
 ```
 
 ### Mortality-law fitting
@@ -187,17 +197,33 @@ from pylifecontingencies import load_table, ActuarialTable, simulate_pv
 lt = load_table("soa_ilt")
 at = ActuarialTable(lt, interest=0.03)
 
-# Monte Carlo term-insurance PV distribution
+# Annual term insurance
 r = simulate_pv(at, x=40, n=20, benefit="term", n_sim=50_000, random_state=42)
 print(r.mean, r.std)
 print(r.quantile(0.95))
 
-# Same API as a convenience method on the table
-r_ann = at.simulate_pv(x=40, n=20, benefit="annuity", n_sim=10_000, random_state=42)
+# Monthly annuity (k=12 payments per year, UDD approximation)
+r_monthly = simulate_pv(at, x=40, n=20, benefit="annuity", k=12, n_sim=50_000)
+
+# 10-year deferred whole-life annuity
+r_deferred = simulate_pv(at, x=40, benefit="annuity", m=10, n_sim=50_000)
+
+# Monthly pension starting in 10 years (k and m combined)
+r_pension = simulate_pv(at, x=40, n=20, benefit="annuity", k=12, m=10, n_sim=50_000)
+
+# Export samples to pandas
+df = r.to_dataframe()   # DataFrame with column "pv"
+df["pv"].describe()
+
+# Same API as a method on the table
+r_ann = at.simulate_pv(x=40, n=20, benefit="annuity", k=12, n_sim=10_000)
 ```
 
 Supported benefit types: `term`, `whole` / `whole_life`, `annuity`,
 `pure_endowment`, `endowment`, `increasing`, `decreasing`.
+
+`k > 1` (fractional payments, UDD) and `m > 0` (deferral) are supported for `annuity`.
+`m > 0` is also supported for all insurance benefit types.
 
 ---
 

@@ -80,8 +80,19 @@ axn(at_br, x=65)         # whole-life annuity-due at age 65
 ```python
 from pylifecontingencies import simulate_pv
 
+# Annual term insurance
 r = simulate_pv(at, x=40, n=20, benefit="term", n_sim=50_000, random_state=42)
 r.mean, r.std, r.quantile(0.95)
+
+# Monthly annuity (k=12 payments per year)
+r_monthly = simulate_pv(at, x=40, n=20, benefit="annuity", k=12, n_sim=50_000)
+
+# 10-year deferred whole-life annuity (pension starting at age 50)
+r_deferred = simulate_pv(at, x=40, benefit="annuity", m=10, n_sim=50_000)
+
+# Export samples to pandas for custom analysis
+df = r.to_dataframe()   # DataFrame with column "pv"
+df["pv"].describe()
 ```
 
 ### Mortality-law fitting
@@ -188,17 +199,34 @@ from pylifecontingencies import load_table, ActuarialTable, simulate_pv
 lt = load_table("soa_ilt")
 at = ActuarialTable(lt, interest=0.03)
 
-# Monte Carlo term-insurance PV distribution
+# Annual term insurance — PV distribution
 r = simulate_pv(at, x=40, n=20, benefit="term", n_sim=50_000, random_state=42)
 print(r.mean, r.std)
 print(r.quantile(0.95))
 
-# Same API as a convenience method on the table
-r_ann = at.simulate_pv(x=40, n=20, benefit="annuity", n_sim=10_000, random_state=42)
+# Monthly annuity (k=12 payments per year, UDD)
+r_monthly = simulate_pv(at, x=40, n=20, benefit="annuity", k=12, n_sim=50_000, random_state=42)
+
+# 10-year deferred whole-life annuity (pension, m=10 deferral)
+r_deferred = simulate_pv(at, x=40, benefit="annuity", m=10, n_sim=50_000, random_state=42)
+
+# Combine: monthly pension starting in 10 years
+r_pension = simulate_pv(at, x=40, n=20, benefit="annuity", k=12, m=10, n_sim=50_000)
+
+# Export to pandas for custom analysis
+df = r.to_dataframe()   # DataFrame with column "pv"
+df["pv"].hist(bins=30)
+df["pv"].describe()
+
+# Convenience method on the table object
+r_ann = at.simulate_pv(x=40, n=20, benefit="annuity", k=12, n_sim=10_000)
 ```
 
 Supported benefit types: `term`, `whole` / `whole_life`, `annuity`,
 `pure_endowment`, `endowment`, `increasing`, `decreasing`.
+
+`k > 1` (fractional payments) and `m > 0` (deferral) are supported for `annuity`.
+`m > 0` is also supported for all insurance benefit types.
 
 ---
 
@@ -329,7 +357,7 @@ python scripts/convert_rda_to_parquet.py
 
 ## Scope and roadmap
 
-**Current:** Single-life EPVs, stochastic PV simulation, mortality-law fitters, interest-rate utilities, demographic functions, bundled tables, Lee-Carter and CBD M5 mortality forecasting.
+**Current:** Single-life EPVs, stochastic PV simulation (k-thly payments, deferral, pandas export), mortality-law fitters, interest-rate utilities, demographic functions, bundled tables, Lee-Carter and CBD M5 mortality forecasting.
 
 **Planned next:** Multi-decrement tables, Renshaw-Haberman and APC forecasting models, and broader stochastic simulation equivalents to `rLifeContingencies`.
 

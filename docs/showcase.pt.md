@@ -10,7 +10,7 @@ O `pylifecontingencies` é uma implementação nativa em Python das funcionalida
 *   **Independência de Ambiente**: Implementação puramente em Python (NumPy + Pandas). O R é utilizado apenas na suíte de testes para validação de resultados.
 *   **Projeção de Mortalidade**: Inclui módulos para modelos de Lee-Carter e CBD (M5), permitindo a criação de tábuas projetadas e análises de coorte.
 *   **Dados Integrados**: Contém tábuas padrão da SOA e tábuas brasileiras **BR-EMS (2010, 2015 e 2021)**.
-*   **Simulação Estocástica**: Métodos integrados para simulação de Monte Carlo do Valor Presente Atuarial (VPA).
+*   **Simulação Estocástica**: Simulação de Monte Carlo do VPA com suporte a frequência de pagamentos fracionária (`k`), período de diferimento (`m`) e exportação para pandas via `StochasticResult.to_dataframe()`.
 
 ---
 
@@ -31,6 +31,25 @@ vpa_anuidade = axn(at, x=40)
 
 # A^1_{40:20|} (seguro temporário de 20 anos)
 vpa_seguro = Axn(at, x=40, n=20)
+```
+
+### Simulação Estocástica — Anuidade Mensal e Diferimento
+
+```python
+from pylifecontingencies import load_table, ActuarialTable, simulate_pv
+
+lt = load_table("soa_ilt")
+at = ActuarialTable(lt, interest=0.03)
+
+# Aposentadoria mensal com início em 10 anos (k=12, diferimento m=10)
+r = simulate_pv(at, x=40, n=20, benefit="annuity", k=12, m=10, n_sim=100_000, random_state=42)
+print(r.mean, r.std)
+lo, hi = r.ci(0.95)
+
+# Exportar para pandas
+df = r.to_dataframe()
+df["pv"].describe()
+df["pv"].hist(bins=30)
 ```
 
 ### Utilização de Tábuas Brasileiras (BR-EMS)

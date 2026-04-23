@@ -11,7 +11,7 @@ Não requer o ambiente R. Funciona puramente com NumPy + Pandas; o `rpy2` é usa
 - Valores presentes atuariais para uma vida: anuidades, seguros, dotações, benefícios crescentes/decrescentes, prêmios e reservas
 - Funções demográficas e de mortalidade: `pxt`, `qxt`, `mxt`, `Lxt`, `Tx`, `exn`
 - Projeção de mortalidade dinâmica: Lee-Carter, CBD M5, tábuas de vida projetadas, suporte a cenários estocásticos
-- Simulação de Monte Carlo para VPA com saída completa de amostras via `StochasticResult`
+- Simulação de Monte Carlo para VPA via `StochasticResult` — suporta frequência de pagamentos fracionária (`k`), período de diferimento (`m`) e exportação para pandas
 - Graduação paramétrica de mortalidade com `GompertzMakeham` e `HeligmanPollard`
 - Dados embutidos: SOA ILT, tábuas **BR-EMS** e tábuas R convertidas para parquet (ex: `soa08`, `AM92Lt`, `demoUsa`)
 
@@ -74,8 +74,18 @@ axn(at_br, x=65)         # anuidade vitalícia antecipada aos 65
 ```python
 from pylifecontingencies import simulate_pv
 
+# Seguro temporário anual
 r = simulate_pv(at, x=40, n=20, benefit="term", n_sim=50_000, random_state=42)
 r.mean, r.std, r.quantile(0.95)
+
+# Anuidade mensal (k=12 pagamentos por ano)
+r_mensal = simulate_pv(at, x=40, n=20, benefit="annuity", k=12, n_sim=50_000)
+
+# Anuidade vitalícia com diferimento de 10 anos (previdência)
+r_diferido = simulate_pv(at, x=40, benefit="annuity", m=10, n_sim=50_000)
+
+# Exportar amostras para pandas
+df = r.to_dataframe()   # DataFrame com coluna "pv"
 ```
 
 ### Projeções Dinâmicas (Lee-Carter)

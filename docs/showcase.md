@@ -10,7 +10,7 @@
 *   **Environment Independence**: Pure Python implementation (NumPy + Pandas). R is only used in the testing suite for result validation.
 *   **Mortality Forecasting**: Includes modules for Lee-Carter and CBD (M5) models, enabling the creation of projected tables and cohort analysis.
 *   **Built-in Data**: Contains standard SOA tables and Brazilian tables **BR-EMS (2010, 2015, and 2021)**.
-*   **Stochastic Simulation**: Integrated methods for Monte Carlo simulation of Actuarial Present Values (APV).
+*   **Stochastic Simulation**: Monte Carlo simulation of Actuarial Present Values (APV) with support for k-thly payment frequency, deferral period, and pandas export via `StochasticResult.to_dataframe()`.
 
 ---
 
@@ -31,6 +31,25 @@ vpa_annuity = axn(at, x=40)
 
 # A^1_{40:20|} (20-year term insurance)
 vpa_insurance = Axn(at, x=40, n=20)
+```
+
+### Stochastic PV Simulation — Monthly Annuity and Deferral
+
+```python
+from pylifecontingencies import load_table, ActuarialTable, simulate_pv
+
+lt = load_table("soa_ilt")
+at = ActuarialTable(lt, interest=0.03)
+
+# Monthly pension starting in 10 years (k=12 payments/year, m=10 deferral)
+r = simulate_pv(at, x=40, n=20, benefit="annuity", k=12, m=10, n_sim=100_000, random_state=42)
+print(r.mean, r.std)
+lo, hi = r.ci(0.95)
+
+# Pandas export for custom analysis or visualisation
+df = r.to_dataframe()
+df["pv"].describe()
+df["pv"].hist(bins=30)
 ```
 
 ### Dynamic Forecasting with Lee-Carter
