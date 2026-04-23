@@ -57,7 +57,7 @@ from .financial import (
 )
 from .simulation import simulate_pv
 from .mortalitylaws import GompertzMakeham, HeligmanPollard, MortalityLawFit, fit_mortality_law
-from .data import load_table, list_tables
+from .data import load_table, list_tables, list_columns
 from .dynamic import DynamicLifeTable, DynamicActuarialTable, StochasticResult
 from .multilife import (
     pxyt,
@@ -127,6 +127,7 @@ __all__ = [
     # Data
     "load_table",
     "list_tables",
+    "list_columns",
     # Dynamic
     "DynamicLifeTable",
     "DynamicActuarialTable",
