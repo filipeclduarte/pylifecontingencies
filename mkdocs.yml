@@ -1,0 +1,60 @@
+site_name: pylifecontingencies
+site_description: Life contingencies and actuarial mathematics in Python
+repo_url: https://github.com/filipeclduarte/pylifecontingencies
+repo_name: filipeclduarte/pylifecontingencies
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - toc.integrate
+
+plugins:
+  - search
+  - i18n:
+      docs_structure: suffix
+      fallback_to_default: true
+      languages:
+        - locale: en
+          default: true
+          name: English
+          build: true
+        - locale: pt
+          name: Português
+          build: true
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          options:
+            show_source: true
+            show_root_heading: true
+
+nav:
+  - Home: index.md
+  - Integration Guide: integration.md
+  - Showcase: showcase.md
+  - Roadmap: roadmap.md
+  - API Reference: api.md
+extra:
+  alternate:
+    - name: English
+      link: /en/
+      lang: en
+    - name: Português
+      link: /pt/
+      lang: pt

@@ -12,6 +12,7 @@ from pylifecontingencies import (
     Axn,
     GompertzMakeham,
     HeligmanPollard,
+    available_mortality_laws,
     axn,
     fit_mortality_law,
     simulate_pv,
@@ -55,6 +56,11 @@ class TestSimulatePV:
 
 class TestMortalityLaws:
 
+    def test_available_mortality_laws(self):
+        laws = available_mortality_laws()
+        assert "GompertzMakeham" in laws
+        assert "HeligmanPollard" in laws
+
     def test_gompertz_makeham_fit_on_soa_table(self, soa_ilt):
         fit = fit_mortality_law(
             soa_ilt,
@@ -89,3 +95,7 @@ class TestMortalityLaws:
 
         assert set(["age", "qx_observed", "qx_fitted", "residual"]).issubset(df.columns)
         assert set(fit.param_names) == set(fit.params_dict)
+
+    def test_rejects_non_native_law_name(self, soa_ilt):
+        with pytest.raises(ValueError, match="Unknown mortality law"):
+            fit_mortality_law(soa_ilt, "siler", ages=np.arange(40, 90))

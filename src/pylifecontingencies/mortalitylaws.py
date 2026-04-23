@@ -284,6 +284,11 @@ def _life_table_fit_inputs(
     return ages_arr, qx_obs, exposure, deaths
 
 
+def available_mortality_laws() -> list[str]:
+    """Return the mortality-law names implemented natively in Python."""
+    return sorted(["GompertzMakeham", "HeligmanPollard"])
+
+
 def fit_mortality_law(
     lt: LifeTable,
     law: str | GompertzMakeham | HeligmanPollard,
@@ -302,9 +307,12 @@ def fit_mortality_law(
         key = law.lower().replace("-", "").replace("_", "")
         if key in {"gompertzmakeham", "gompertz", "makeham"}:
             law = GompertzMakeham()
-        elif key in {"heligmanpollard", "heligman"}:
+        elif key in {"heligmanpollard", "heligman", "hp"}:
             law = HeligmanPollard()
         else:
-            raise ValueError(f"Unknown mortality law: {law!r}")
+            raise ValueError(
+                f"Unknown mortality law: {law!r}. "
+                f"Available native laws: {available_mortality_laws()}"
+            )
 
     return law.fit(lt, ages=ages)

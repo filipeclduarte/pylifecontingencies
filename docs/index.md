@@ -88,11 +88,10 @@ r.mean, r.std, r.quantile(0.95)
 
 ```python
 import numpy as np
-from pylifecontingencies import available_mortality_laws, fit_mortality_law
+from pylifecontingencies import fit_mortality_law
 
 fit = fit_mortality_law(lt, "gompertz_makeham", ages=np.arange(40, 90))
 fit.params_dict, fit.rmse
-available_mortality_laws()
 ```
 
 ---
@@ -207,7 +206,6 @@ Supported benefit types: `term`, `whole` / `whole_life`, `annuity`,
 ```python
 import numpy as np
 from pylifecontingencies import (
-    available_mortality_laws,
     load_table,
     fit_mortality_law,
     GompertzMakeham,
@@ -224,19 +222,10 @@ print(gm_fit.rmse, gm_fit.aic)
 # Explicit law object
 hp_fit = fit_mortality_law(lt, HeligmanPollard(), ages=np.arange(1, 90))
 df_fit = hp_fit.to_dataframe()
-available_mortality_laws()
 ```
 
 `MortalityLawFit` stores fitted parameters, observed/fitted `q_x`, residuals,
-and goodness-of-fit metrics (`loglik`, `AIC`, `BIC`, `RMSE`, `MAE`). The current
-implementation is Python-only. R packages can be used as inspiration for future
-models, but they are not required at runtime.
-
-```python
-from pylifecontingencies import available_mortality_laws
-
-available_mortality_laws()
-```
+and goodness-of-fit metrics (`loglik`, `AIC`, `BIC`, `RMSE`, `MAE`).
 
 ---
 
