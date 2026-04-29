@@ -13,7 +13,7 @@ No R runtime required. Pure NumPy + pandas at install time; `rpy2` is only used 
 - Dynamic mortality forecasting: Lee-Carter, CBD M5, projected life tables, stochastic scenario support
 - Monte Carlo PV simulation via `StochasticResult` — k-thly payments, deferral, pandas export, visualisation (`hist`, `plot`), and risk metrics (`var`, `tvar`)
 - Parametric mortality graduation with `GompertzMakeham` and `HeligmanPollard`
-- Bundled data: SOA ILT, BR-EMS tables, and R-sourced parquet tables such as `soa08`, `AM92Lt`, `AF92Lt`, `demoUsa`, and `demoGermany`
+- Bundled data: 100+ mortality tables via `load_table()` / `list_tables()` — SOA ILT, BR-EMS series (2010–2021), AT, UP, RP, GAM, CSO, IBGE, and many historical tables; plus R-sourced parquets (`soa08`, `AM92Lt`, `demoUsa`, etc.)
 
 ## Installation
 
@@ -304,13 +304,35 @@ exn(lt, x=40)         # e_40  (curtate)
 
 ## Bundled tables
 
-| Name | Description |
-|------|-------------|
-| `soa_ilt` | SOA Illustrative Life Table (Bowers et al., ages 0–99) |
+Over 100 mortality tables are shipped with the package and discoverable at runtime:
 
-R-sourced parquet tables are also bundled, including `soa08`, `AM92Lt`,
-`AF92Lt`, `demoUsa`, `demoUk`, `demoFrance`, `demoIta`, `demoGermany`,
-`demoJapan`, `demoChina`, and `demoCanada`.
+```python
+from pylifecontingencies import list_tables, load_table
+
+list_tables()          # returns all available names
+lt = load_table("at_2000_female")
+lt = load_table("ibge_2020_homens")
+lt = load_table("up_94_male")
+```
+
+### CSV tables (automatically discovered)
+
+Selected groups:
+
+| Group | Examples |
+|-------|---------|
+| SOA | `soa_ilt` |
+| AT (Annuity 2000) | `at_2000_female`, `at_2000_male`, `at_49_female`, `at_49_male`, `at_83_female_basic`, … |
+| UP / RP (Group annuity) | `up_84_f`, `up_84_m`, `up_94_female`, `up_94_male`, `rp_2000_female`, `rp_2000male`, … |
+| GAM | `gam_71_female`, `gam_71_male`, `gam_83_female_suav_10`, `gam_94_female`, … |
+| CSO | `cso_41`, `cso_58`, `cso58_female`, `cso58_male`, `cso80` |
+| BR-EMS (Sobrevivência) | `br_emssb_2010_m/f`, `br_emssb_2015_m/f`, `br_emssb_2021_m/f` |
+| BR-EMS (Mortalidade) | `br_emsmt_2010_m/f`, `br_emsmt_2015_m/f`, `br_emsmt_2021_m/f` |
+| IBGE | `ibge_2006_ambos_os_sexos`, `ibge_2020_homens`, `ibge_2020_mulheres`, … |
+| Historical | `american_experience`, `bentzien`, `muller`, `rentiers_francais`, `zimmermann`, … |
+
+All CSV tables have `age` and `qx` columns; `x_min` is inferred automatically from
+the first age in the file.
 
 ### Multi-column R tables
 
