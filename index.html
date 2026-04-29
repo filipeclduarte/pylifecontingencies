@@ -1,0 +1,1798 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Life contingencies and actuarial mathematics in Python">
+      
+      
+      
+        <link rel="canonical" href="https://filipeclduarte.github.io/pylifecontingencies/">
+      
+      
+      
+        <link rel="next" href="integration/">
+      
+      
+        
+          <link rel="alternate" href="/pylifecontingencies/" hreflang="en">
+        
+          <link rel="alternate" href="/pylifecontingencies/pt/" hreflang="pt">
+        
+      
+      
+      <link rel="icon" href="assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>pylifecontingencies</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#pylifecontingencies" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="." title="pylifecontingencies" class="md-header__button md-logo" aria-label="pylifecontingencies" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            pylifecontingencies
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Home
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Select language">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="/pylifecontingencies/" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="/pylifecontingencies/pt/" hreflang="pt" class="md-select__link">
+              Português
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/filipeclduarte/pylifecontingencies" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    filipeclduarte/pylifecontingencies
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="integration/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Integration Guide
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="showcase/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Showcase
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="roadmap/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Roadmap
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="api/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  API Reference
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="." title="pylifecontingencies" class="md-nav__button md-logo" aria-label="pylifecontingencies" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    pylifecontingencies
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/filipeclduarte/pylifecontingencies" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    filipeclduarte/pylifecontingencies
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="." class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-it-includes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What it includes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick examples
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Quick examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#static-actuarial-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Static actuarial values
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bundled-r-tables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bundled R tables
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#br-ems-tables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BR-EMS tables
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stochastic-simulation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stochastic simulation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mortality-law-fitting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mortality-law fitting
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#development-and-release" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Development and release
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-start-static-life-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick start — static life table
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Quick start — static life table">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#semi-annual-payments-k2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Semi-annual payments (k=2)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-start-dynamic-life-tables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick start — dynamic life tables
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stochastic-pv-simulation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stochastic PV simulation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mortality-law-graduation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mortality-law graduation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interest-rate-utilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interest-rate utilities
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#demographic-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Demographic functions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bundled-tables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bundled tables
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Bundled tables">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#csv-tables-automatically-discovered" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CSV tables (automatically discovered)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CSV tables (automatically discovered)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#soa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SOA
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#at-annuity-tables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AT — Annuity Tables
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#up-rp-group-annuity-tables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UP / RP — Group annuity tables
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gam-group-annuity-mortality" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GAM — Group Annuity Mortality
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cso-commissioners-standard-ordinary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CSO — Commissioners Standard Ordinary
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gkm-gkf-gr-german-tables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GKM / GKF / GR — German tables
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#br-ems-brazilian-experience-tables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BR-EMS — Brazilian Experience Tables
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ibge-brazilian-population-tables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IBGE — Brazilian population tables
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#brazilian-industry-specific-tables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Brazilian industry-specific tables
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rrb-railroad-retirement-board" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RRB — Railroad Retirement Board
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgb-swiss-tables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SGB — Swiss tables
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#historical-and-international-tables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Historical and international tables
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-column-r-tables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-column R tables
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comparison-with-r-lifecontingencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparison with R lifecontingencies
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scope-and-roadmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scope and roadmap
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#license" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        License
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Integration Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="showcase/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Showcase
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="roadmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Roadmap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="pylifecontingencies">pylifecontingencies</h1>
+<p>A native Python port of the R <a href="https://github.com/spedygiorgio/lifecontingencies"><code>lifecontingencies</code></a> package, extended with <strong>dynamic life tables and mortality-rate forecasting</strong> (Lee-Carter, CBD M5).</p>
+<p>No R runtime required. Pure NumPy + pandas at install time; <code>rpy2</code> is only used in the validation test suite.</p>
+<hr />
+<h2 id="what-it-includes">What it includes</h2>
+<ul>
+<li>Single-life actuarial present values: annuities, insurances, endowments, increasing/decreasing benefits, premiums, and reserves</li>
+<li>Mortality and demographic utilities: <code>pxt</code>, <code>qxt</code>, <code>mxt</code>, <code>Lxt</code>, <code>Tx</code>, <code>exn</code></li>
+<li>Dynamic mortality forecasting: Lee-Carter, CBD M5, projected life tables, stochastic scenario support</li>
+<li>Monte Carlo PV simulation via <code>StochasticResult</code> — k-thly payments, deferral, pandas export, visualisation (<code>hist</code>, <code>plot</code>), and risk metrics (<code>var</code>, <code>tvar</code>)</li>
+<li>Parametric mortality graduation with <code>GompertzMakeham</code> and <code>HeligmanPollard</code></li>
+<li>Bundled data: 100+ mortality tables via <code>load_table()</code> / <code>list_tables()</code> — SOA ILT, BR-EMS series (2010–2021), AT, UP, RP, GAM, CSO, IBGE, and many historical tables; plus R-sourced parquets (<code>soa08</code>, <code>AM92Lt</code>, <code>demoUsa</code>, etc.)</li>
+</ul>
+<h2 id="installation">Installation</h2>
+<p>Core package:</p>
+<pre><code class="language-bash">pip install pylifecontingencies
+</code></pre>
+<p>With SOA XTbML support:</p>
+<pre><code class="language-bash">pip install &quot;pylifecontingencies[soa]&quot;
+</code></pre>
+<p>For local development and release checks:</p>
+<pre><code class="language-bash">pip install -e &quot;.[dev]&quot;
+</code></pre>
+<hr />
+<h2 id="quick-examples">Quick examples</h2>
+<h3 id="static-actuarial-values">Static actuarial values</h3>
+<pre><code class="language-python">from pylifecontingencies import load_table, ActuarialTable, axn, Axn, AExn
+
+lt = load_table(&quot;soa_ilt&quot;)
+at = ActuarialTable(lt, interest=0.06)
+
+axn(at, x=40)          # whole-life annuity-due
+Axn(at, x=40, n=20)    # 20-year term insurance
+AExn(at, x=40, n=20)   # 20-year endowment insurance
+</code></pre>
+<h3 id="bundled-r-tables">Bundled R tables</h3>
+<pre><code class="language-python">from pylifecontingencies import load_table, list_columns
+
+list_columns(&quot;demoUsa&quot;)
+lt_usa = load_table(&quot;demoUsa&quot;, column=&quot;USSS2007M&quot;)
+lt_soa = load_table(&quot;soa08&quot;)
+</code></pre>
+<h3 id="br-ems-tables">BR-EMS tables</h3>
+<pre><code class="language-python">from pylifecontingencies import load_table, ActuarialTable, axn, qxt
+
+# BR-EMS Survival 2021, male
+lt_br = load_table(&quot;br_emssb_2021_m&quot;)
+at_br = ActuarialTable(lt_br, interest=0.03)
+
+qxt(lt_br, x=40, t=10)   # 10-year death probability at age 40
+axn(at_br, x=65)         # whole-life annuity-due at age 65
+</code></pre>
+<h3 id="stochastic-simulation">Stochastic simulation</h3>
+<pre><code class="language-python">from pylifecontingencies import simulate_pv
+
+# Annual term insurance
+r = simulate_pv(at, x=40, n=20, benefit=&quot;term&quot;, n_sim=50_000, random_state=42)
+r.mean, r.std, r.quantile(0.95)
+
+# Monthly annuity (k=12)
+r_monthly = simulate_pv(at, x=40, n=20, benefit=&quot;annuity&quot;, k=12, n_sim=50_000)
+
+# 10-year deferred whole-life annuity
+r_deferred = simulate_pv(at, x=40, benefit=&quot;annuity&quot;, m=10, n_sim=50_000)
+
+# Visualisation
+r.hist()          # histogram with mean and 95 % CI lines
+r.plot()          # empirical CDF
+
+# Risk metrics (Solvency II)
+r.var(0.995)      # Value at Risk at 99.5 %
+r.tvar(0.995)     # Tail VaR (Expected Shortfall) at 99.5 %
+
+# Export samples to pandas
+df = r.to_dataframe()   # DataFrame with column &quot;pv&quot;
+</code></pre>
+<h3 id="mortality-law-fitting">Mortality-law fitting</h3>
+<pre><code class="language-python">import numpy as np
+from pylifecontingencies import fit_mortality_law
+
+fit = fit_mortality_law(lt, &quot;gompertz_makeham&quot;, ages=np.arange(40, 90))
+fit.params_dict, fit.rmse
+</code></pre>
+<hr />
+<h2 id="development-and-release">Development and release</h2>
+<p>GitHub Actions workflows live under <code>.github/workflows/</code>:</p>
+<ul>
+<li><code>ci.yml</code> runs the main pytest matrix on Python 3.10, 3.11, and 3.12, plus coverage and distribution builds.</li>
+<li><code>r-parity.yml</code> installs R + <code>lifecontingencies</code> and runs the parity tests that compare Python results against the R package.</li>
+<li><code>publish.yml</code> builds and publishes to PyPI on tags matching <code>v*</code> after the test suite passes.</li>
+</ul>
+<p>For publishing, configure GitHub Trusted Publishing for the PyPI project, then create a version tag such as:</p>
+<pre><code class="language-bash">git tag v0.1.0
+git push origin v0.1.0
+</code></pre>
+<hr />
+<h2 id="quick-start-static-life-table">Quick start — static life table</h2>
+<pre><code class="language-python">from pylifecontingencies import load_table, ActuarialTable
+from pylifecontingencies import axn, Axn, Exn, AExn, IAxn, DAxn, exn
+
+# Load a bundled table
+lt = load_table(&quot;soa_ilt&quot;)            # SOA Illustrative Life Table
+at = ActuarialTable(lt, interest=0.06)
+
+# Whole-life annuity-due at age 40
+axn(at, x=40)                         # ä_40
+
+# 20-year term insurance
+Axn(at, x=40, n=20)                   # A^1_{40:20|}
+
+# 20-year endowment insurance
+AExn(at, x=40, n=20)                  # A_{40:20|}
+
+# 20-year pure endowment
+Exn(at, x=40, n=20)                   # _20 E_40
+
+# Increasing whole-life insurance
+IAxn(at, x=40)                        # (IA)_40
+
+# 20-year decreasing term
+DAxn(at, x=40, n=20)                  # (DA)^1_{40:20|}
+
+# Curtate future lifetime expectation
+exn(at, x=40)                         # e_40
+</code></pre>
+<h3 id="semi-annual-payments-k2">Semi-annual payments (k=2)</h3>
+<pre><code class="language-python">axn(at, x=40, n=20, k=2)             # ä^(2)_{40:20|} via UDD
+Axn(at, x=40, n=20, k=2)             # A^(2)_{40:20|} via UDD
+</code></pre>
+<hr />
+<h2 id="quick-start-dynamic-life-tables">Quick start — dynamic life tables</h2>
+<pre><code class="language-python">from pylifecontingencies.dynamic import MortalityRates, LeeCarter, ProjectedLifeTable
+
+# Build a rates surface from a DataFrame (ages as index, years as columns, values = log(mx))
+rates = MortalityRates.from_dataframe(df_log_mx)
+
+# Fit Lee-Carter
+lc = LeeCarter().fit(rates)
+print(lc.ax)   # age-specific levels
+print(lc.bx)   # age-specific sensitivities
+print(lc.kt)   # period index
+
+# Forecast 50 years ahead with 95% bootstrap prediction interval
+forecast = lc.forecast(horizon=50, n_bootstrap=500, ci=0.95)
+
+# Build a cohort life table for someone born in 1985
+cohort_lt = ProjectedLifeTable(forecast, birth_year=1985).to_life_table()
+at_cohort = ActuarialTable(cohort_lt, interest=0.03)
+axn(at_cohort, x=40)   # cohort-true annuity at 40
+</code></pre>
+<hr />
+<h2 id="stochastic-pv-simulation">Stochastic PV simulation</h2>
+<pre><code class="language-python">from pylifecontingencies import load_table, ActuarialTable, simulate_pv
+
+lt = load_table(&quot;soa_ilt&quot;)
+at = ActuarialTable(lt, interest=0.03)
+
+# Annual term insurance
+r = simulate_pv(at, x=40, n=20, benefit=&quot;term&quot;, n_sim=50_000, random_state=42)
+print(r.mean, r.std)
+print(r.quantile(0.95))
+
+# Monthly annuity (k=12 payments per year, UDD approximation)
+r_monthly = simulate_pv(at, x=40, n=20, benefit=&quot;annuity&quot;, k=12, n_sim=50_000)
+
+# 10-year deferred whole-life annuity
+r_deferred = simulate_pv(at, x=40, benefit=&quot;annuity&quot;, m=10, n_sim=50_000)
+
+# Monthly pension starting in 10 years (k and m combined)
+r_pension = simulate_pv(at, x=40, n=20, benefit=&quot;annuity&quot;, k=12, m=10, n_sim=50_000)
+
+# Visualisation
+r.hist()           # histogram with mean and 95 % CI lines
+r.plot()           # empirical CDF (step-wise)
+
+# Risk metrics (Solvency II / reserving)
+r.var(0.995)       # Value at Risk at 99.5 %
+r.tvar(0.995)      # Tail VaR (Expected Shortfall) at 99.5 %
+
+# Export samples to pandas
+df = r.to_dataframe()   # DataFrame with column &quot;pv&quot;
+df[&quot;pv&quot;].describe()
+
+# Same API as a method on the table
+r_ann = at.simulate_pv(x=40, n=20, benefit=&quot;annuity&quot;, k=12, n_sim=10_000)
+</code></pre>
+<p>Supported benefit types: <code>term</code>, <code>whole</code> / <code>whole_life</code>, <code>annuity</code>,
+<code>pure_endowment</code>, <code>endowment</code>, <code>increasing</code>, <code>decreasing</code>.</p>
+<p><code>k &gt; 1</code> (fractional payments, UDD) and <code>m &gt; 0</code> (deferral) are supported for <code>annuity</code>.
+<code>m &gt; 0</code> is also supported for all insurance benefit types.</p>
+<hr />
+<h2 id="mortality-law-graduation">Mortality-law graduation</h2>
+<pre><code class="language-python">import numpy as np
+from pylifecontingencies import (
+    load_table,
+    fit_mortality_law,
+    GompertzMakeham,
+    HeligmanPollard,
+)
+
+lt = load_table(&quot;soa_ilt&quot;)
+
+# String dispatch
+gm_fit = fit_mortality_law(lt, &quot;gompertz_makeham&quot;, ages=np.arange(40, 90))
+print(gm_fit.params_dict)
+print(gm_fit.rmse, gm_fit.aic)
+
+# Explicit law object
+hp_fit = fit_mortality_law(lt, HeligmanPollard(), ages=np.arange(1, 90))
+df_fit = hp_fit.to_dataframe()
+</code></pre>
+<p><code>MortalityLawFit</code> stores fitted parameters, observed/fitted <code>q_x</code>, residuals,
+and goodness-of-fit metrics (<code>loglik</code>, <code>AIC</code>, <code>BIC</code>, <code>RMSE</code>, <code>MAE</code>).</p>
+<hr />
+<h2 id="interest-rate-utilities">Interest-rate utilities</h2>
+<pre><code class="language-python">from pylifecontingencies import InterestRate
+
+ir = InterestRate(i=0.05)
+ir.v           # 0.952...  discount factor
+ir.delta       # 0.04879...  force of interest
+ir.d           # 0.04762...  annual discount rate
+ir.i_m(12)     # monthly nominal rate
+ir.d_m(12)     # monthly nominal discount rate
+
+InterestRate.from_delta(0.05)    # from force of interest
+InterestRate.from_discount(0.04) # from annual discount rate
+</code></pre>
+<hr />
+<h2 id="demographic-functions">Demographic functions</h2>
+<pre><code class="language-python">from pylifecontingencies import pxt, qxt, dxt, mxt, Lxt, Tx
+
+lt = load_table(&quot;soa_ilt&quot;)
+pxt(lt, x=40, t=10)   # _10 p_40
+qxt(lt, x=40, t=10)   # _10 q_40
+exn(lt, x=40)         # e_40  (curtate)
+</code></pre>
+<hr />
+<h2 id="bundled-tables">Bundled tables</h2>
+<p>Over 100 mortality tables are shipped with the package and discoverable at runtime:</p>
+<pre><code class="language-python">from pylifecontingencies import list_tables, load_table
+
+list_tables()          # returns all available names
+lt = load_table(&quot;at_2000_female&quot;)
+lt = load_table(&quot;ibge_2020_homens&quot;)
+lt = load_table(&quot;up_94_male&quot;)
+</code></pre>
+<h3 id="csv-tables-automatically-discovered">CSV tables (automatically discovered)</h3>
+<p>All CSV tables have <code>age</code> and <code>qx</code> columns; <code>x_min</code> is inferred automatically from the first age in the file.</p>
+<h4 id="soa">SOA</h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>soa_ilt</code></td>
+<td>SOA Illustrative Life Table (Bowers et al., ages 0–99)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="at-annuity-tables">AT — Annuity Tables</h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>at_49_female</code></td>
+</tr>
+<tr>
+<td><code>at_49_male</code></td>
+</tr>
+<tr>
+<td><code>at_50</code></td>
+</tr>
+<tr>
+<td><code>at_55</code></td>
+</tr>
+<tr>
+<td><code>at_71</code></td>
+</tr>
+<tr>
+<td><code>at_83_female_basic</code></td>
+</tr>
+<tr>
+<td><code>at_83_female_iam</code></td>
+</tr>
+<tr>
+<td><code>at_83_male_basic</code></td>
+</tr>
+<tr>
+<td><code>at_83_male_iam</code></td>
+</tr>
+<tr>
+<td><code>at_2000_female</code></td>
+</tr>
+<tr>
+<td><code>at_2000_male</code></td>
+</tr>
+<tr>
+<td><code>at2000_suavizada_10_fem</code></td>
+</tr>
+<tr>
+<td><code>at2000_suavizada_10_mas</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="up-rp-group-annuity-tables">UP / RP — Group annuity tables</h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>up_84_f</code></td>
+</tr>
+<tr>
+<td><code>up_84_m</code></td>
+</tr>
+<tr>
+<td><code>up84_mas_fem</code></td>
+</tr>
+<tr>
+<td><code>up_94_female</code></td>
+</tr>
+<tr>
+<td><code>up_94_male</code></td>
+</tr>
+<tr>
+<td><code>rp_2000_female</code></td>
+</tr>
+<tr>
+<td><code>rp_2000male</code></td>
+</tr>
+<tr>
+<td><code>rp_2000_disabled_female</code></td>
+</tr>
+<tr>
+<td><code>rp_2000_disabled_male</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="gam-group-annuity-mortality">GAM — Group Annuity Mortality</h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>gam_71_female</code></td>
+</tr>
+<tr>
+<td><code>gam_71_male</code></td>
+</tr>
+<tr>
+<td><code>gam83_basica_female</code></td>
+</tr>
+<tr>
+<td><code>gam83_basica_masc</code></td>
+</tr>
+<tr>
+<td><code>gam_83_female_suav_10</code></td>
+</tr>
+<tr>
+<td><code>gam_83_masc_suav_10</code></td>
+</tr>
+<tr>
+<td><code>gam_94_female</code></td>
+</tr>
+<tr>
+<td><code>gam_94male</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="cso-commissioners-standard-ordinary">CSO — Commissioners Standard Ordinary</h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cso_41</code></td>
+</tr>
+<tr>
+<td><code>cso_58</code></td>
+</tr>
+<tr>
+<td><code>cso58_female</code></td>
+</tr>
+<tr>
+<td><code>cso58_male</code></td>
+</tr>
+<tr>
+<td><code>cso58_fem_age_last</code></td>
+</tr>
+<tr>
+<td><code>cso58_fem_age_nearest</code></td>
+</tr>
+<tr>
+<td><code>cso58_mas_age_last</code></td>
+</tr>
+<tr>
+<td><code>cso58_mas_age_nearest</code></td>
+</tr>
+<tr>
+<td><code>cso80</code></td>
+</tr>
+<tr>
+<td><code>csg_60</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="gkm-gkf-gr-german-tables">GKM / GKF / GR — German tables</h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>gkm_70</code></td>
+</tr>
+<tr>
+<td><code>gkm_80</code></td>
+</tr>
+<tr>
+<td><code>gkm_95</code></td>
+</tr>
+<tr>
+<td><code>gkf_95</code></td>
+</tr>
+<tr>
+<td><code>gr_95_male</code></td>
+</tr>
+<tr>
+<td><code>gr_95female</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="br-ems-brazilian-experience-tables">BR-EMS — Brazilian Experience Tables</h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>br_emssb_2010_m</code></td>
+</tr>
+<tr>
+<td><code>br_emssb_2010_f</code></td>
+</tr>
+<tr>
+<td><code>br_emssb_2015_m</code></td>
+</tr>
+<tr>
+<td><code>br_emssb_2015_f</code></td>
+</tr>
+<tr>
+<td><code>br_emssb_2021_m</code></td>
+</tr>
+<tr>
+<td><code>br_emssb_2021_f</code></td>
+</tr>
+<tr>
+<td><code>br_emsmt_2010_m</code></td>
+</tr>
+<tr>
+<td><code>br_emsmt_2010_f</code></td>
+</tr>
+<tr>
+<td><code>br_emsmt_2015_m</code></td>
+</tr>
+<tr>
+<td><code>br_emsmt_2015_f</code></td>
+</tr>
+<tr>
+<td><code>br_emsmt_2021_m</code></td>
+</tr>
+<tr>
+<td><code>br_emsmt_2021_f</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="ibge-brazilian-population-tables">IBGE — Brazilian population tables</h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ibge_2006_ambos_os_sexos</code></td>
+</tr>
+<tr>
+<td><code>ibge_2007_ambos_os_sexos</code></td>
+</tr>
+<tr>
+<td><code>ibge_2008_ambos_os_sexos</code></td>
+</tr>
+<tr>
+<td><code>ibge_2009_ambos_os_sexos</code></td>
+</tr>
+<tr>
+<td><code>ibge_2020_homens</code></td>
+</tr>
+<tr>
+<td><code>ibge_2020_mulheres</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="brazilian-industry-specific-tables">Brazilian industry-specific tables</h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>iba_ferroviarios</code></td>
+</tr>
+<tr>
+<td><code>iba_ferroviarios_v2</code></td>
+</tr>
+<tr>
+<td><code>iapb_57_forte</code></td>
+</tr>
+<tr>
+<td><code>iapb_57_fraca</code></td>
+</tr>
+<tr>
+<td><code>iapc</code></td>
+</tr>
+<tr>
+<td><code>light_forte</code></td>
+</tr>
+<tr>
+<td><code>light_media</code></td>
+</tr>
+<tr>
+<td><code>prudential_50</code></td>
+</tr>
+<tr>
+<td><code>prudential_ferr_aposent</code></td>
+</tr>
+<tr>
+<td><code>rgps_99_02_m_m</code></td>
+</tr>
+<tr>
+<td><code>experiencia_cap</code></td>
+</tr>
+<tr>
+<td><code>alvaro_vindas</code></td>
+</tr>
+<tr>
+<td><code>grupal_americana</code></td>
+</tr>
+<tr>
+<td><code>grupal_americana_v2</code></td>
+</tr>
+<tr>
+<td><code>grupo_americana</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="rrb-railroad-retirement-board">RRB — Railroad Retirement Board</h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>rrb_44</code></td>
+</tr>
+<tr>
+<td><code>rrb_1944_mod_fem</code></td>
+</tr>
+<tr>
+<td><code>rrb_1944_mod_masc</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="sgb-swiss-tables">SGB — Swiss tables</h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sgb_51</code></td>
+</tr>
+<tr>
+<td><code>sgb_71</code></td>
+</tr>
+<tr>
+<td><code>sgb_75</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="historical-and-international-tables">Historical and international tables</h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>allg_72</code></td>
+</tr>
+<tr>
+<td><code>american_experience</code></td>
+</tr>
+<tr>
+<td><code>bentzien</code></td>
+</tr>
+<tr>
+<td><code>eb7_75</code></td>
+</tr>
+<tr>
+<td><code>hunter_s</code></td>
+</tr>
+<tr>
+<td><code>hunter_semitropical</code></td>
+</tr>
+<tr>
+<td><code>muller</code></td>
+</tr>
+<tr>
+<td><code>muller_v2</code></td>
+</tr>
+<tr>
+<td><code>rentiers_francais</code></td>
+</tr>
+<tr>
+<td><code>tasa_1927</code></td>
+</tr>
+<tr>
+<td><code>tasa_1927_v2</code></td>
+</tr>
+<tr>
+<td><code>ustp_61</code></td>
+</tr>
+<tr>
+<td><code>winklevoss</code></td>
+</tr>
+<tr>
+<td><code>wyatt_1985</code></td>
+</tr>
+<tr>
+<td><code>x_17</code></td>
+</tr>
+<tr>
+<td><code>zimmermann</code></td>
+</tr>
+<tr>
+<td><code>zimmermann_empr_escrit</code></td>
+</tr>
+<tr>
+<td><code>zimmermann_ferr_alemaes</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="multi-column-r-tables">Multi-column R tables</h3>
+<p>Some bundled parquet datasets contain several sub-tables in one file. Use
+<code>list_columns(name)</code> to inspect the available columns and <code>load_table(..., column=...)</code>
+to select one:</p>
+<pre><code class="language-python">from pylifecontingencies import load_table, list_columns
+
+list_columns(&quot;demoUsa&quot;)
+# ['USSS2007M', 'USSS2007F', 'USSS2000M', 'USSS2000F', 'USSS1990M', 'USSS1990F']
+
+lt_usa = load_table(&quot;demoUsa&quot;, column=&quot;USSS2007M&quot;)
+lt_ger = load_table(&quot;demoGermany&quot;, column=&quot;qxMale&quot;)
+</code></pre>
+<p>Single-column parquet tables such as <code>soa08</code>, <code>AM92Lt</code>, and <code>AF92Lt</code> can be loaded
+directly:</p>
+<pre><code class="language-python">lt = load_table(&quot;soa08&quot;)
+</code></pre>
+<p>Additional tables (AM92, AF92, demoUsa, etc.) can be imported from R using the provided conversion script:</p>
+<pre><code class="language-bash"># requires R + lifecontingencies + rpy2 + pyarrow
+python scripts/convert_rda_to_parquet.py
+</code></pre>
+<hr />
+<h2 id="comparison-with-r-lifecontingencies">Comparison with R lifecontingencies</h2>
+<table>
+<thead>
+<tr>
+<th>R</th>
+<th>Python</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>axn(at, x=40, n=20)</code></td>
+<td><code>axn(at, x=40, n=20)</code></td>
+</tr>
+<tr>
+<td><code>Axn(at, x=40, n=20)</code></td>
+<td><code>Axn(at, x=40, n=20)</code></td>
+</tr>
+<tr>
+<td><code>Exn(at, x=40, n=20)</code></td>
+<td><code>Exn(at, x=40, n=20)</code></td>
+</tr>
+<tr>
+<td><code>exn(lt, x=40)</code></td>
+<td><code>exn(lt, x=40)</code></td>
+</tr>
+<tr>
+<td><code>pxt(lt, x=40, t=5)</code></td>
+<td><code>pxt(lt, x=40, t=5)</code></td>
+</tr>
+<tr>
+<td><code>new("lifetable", x=..., lx=..., name=...)</code></td>
+<td><code>LifeTable(lx, x_min=0, name=...)</code></td>
+</tr>
+<tr>
+<td><code>new("actuarialtable", ..., interest=0.06)</code></td>
+<td><code>ActuarialTable(lt, interest=0.06)</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="scope-and-roadmap">Scope and roadmap</h2>
+<p><strong>Current:</strong> Single-life EPVs, stochastic PV simulation, mortality-law fitters, interest-rate utilities, demographic functions, bundled tables, Lee-Carter and CBD M5 mortality forecasting.</p>
+<p><strong>Planned next:</strong> Multi-decrement tables, Renshaw-Haberman and APC forecasting models, and broader stochastic simulation equivalents to <code>rLifeContingencies</code>.</p>
+<h2 id="license">License</h2>
+<p>GPL-2.0 — matching the upstream <code>lifecontingencies</code> R package.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": ["navigation.tabs", "navigation.sections", "toc.integrate"], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
