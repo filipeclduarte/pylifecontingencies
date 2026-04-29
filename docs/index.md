@@ -317,22 +317,171 @@ lt = load_table("up_94_male")
 
 ### CSV tables (automatically discovered)
 
-Selected groups:
+All CSV tables have `age` and `qx` columns; `x_min` is inferred automatically from the first age in the file.
 
-| Group | Examples |
-|-------|---------|
-| SOA | `soa_ilt` |
-| AT (Annuity 2000) | `at_2000_female`, `at_2000_male`, `at_49_female`, `at_49_male`, `at_83_female_basic`, … |
-| UP / RP (Group annuity) | `up_84_f`, `up_84_m`, `up_94_female`, `up_94_male`, `rp_2000_female`, `rp_2000male`, … |
-| GAM | `gam_71_female`, `gam_71_male`, `gam_83_female_suav_10`, `gam_94_female`, … |
-| CSO | `cso_41`, `cso_58`, `cso58_female`, `cso58_male`, `cso80` |
-| BR-EMS (Sobrevivência) | `br_emssb_2010_m/f`, `br_emssb_2015_m/f`, `br_emssb_2021_m/f` |
-| BR-EMS (Mortalidade) | `br_emsmt_2010_m/f`, `br_emsmt_2015_m/f`, `br_emsmt_2021_m/f` |
-| IBGE | `ibge_2006_ambos_os_sexos`, `ibge_2020_homens`, `ibge_2020_mulheres`, … |
-| Historical | `american_experience`, `bentzien`, `muller`, `rentiers_francais`, `zimmermann`, … |
+#### SOA
 
-All CSV tables have `age` and `qx` columns; `x_min` is inferred automatically from
-the first age in the file.
+| Name | Description |
+|------|-------------|
+| `soa_ilt` | SOA Illustrative Life Table (Bowers et al., ages 0–99) |
+
+#### AT — Annuity Tables
+
+| Name |
+|------|
+| `at_49_female` |
+| `at_49_male` |
+| `at_50` |
+| `at_55` |
+| `at_71` |
+| `at_83_female_basic` |
+| `at_83_female_iam` |
+| `at_83_male_basic` |
+| `at_83_male_iam` |
+| `at_2000_female` |
+| `at_2000_male` |
+| `at2000_suavizada_10_fem` |
+| `at2000_suavizada_10_mas` |
+
+#### UP / RP — Group annuity tables
+
+| Name |
+|------|
+| `up_84_f` |
+| `up_84_m` |
+| `up84_mas_fem` |
+| `up_94_female` |
+| `up_94_male` |
+| `rp_2000_female` |
+| `rp_2000male` |
+| `rp_2000_disabled_female` |
+| `rp_2000_disabled_male` |
+
+#### GAM — Group Annuity Mortality
+
+| Name |
+|------|
+| `gam_71_female` |
+| `gam_71_male` |
+| `gam83_basica_female` |
+| `gam83_basica_masc` |
+| `gam_83_female_suav_10` |
+| `gam_83_masc_suav_10` |
+| `gam_94_female` |
+| `gam_94male` |
+
+#### CSO — Commissioners Standard Ordinary
+
+| Name |
+|------|
+| `cso_41` |
+| `cso_58` |
+| `cso58_female` |
+| `cso58_male` |
+| `cso58_fem_age_last` |
+| `cso58_fem_age_nearest` |
+| `cso58_mas_age_last` |
+| `cso58_mas_age_nearest` |
+| `cso80` |
+| `csg_60` |
+
+#### GKM / GKF / GR — German tables
+
+| Name |
+|------|
+| `gkm_70` |
+| `gkm_80` |
+| `gkm_95` |
+| `gkf_95` |
+| `gr_95_male` |
+| `gr_95female` |
+
+#### BR-EMS — Brazilian Experience Tables
+
+| Name |
+|------|
+| `br_emssb_2010_m` |
+| `br_emssb_2010_f` |
+| `br_emssb_2015_m` |
+| `br_emssb_2015_f` |
+| `br_emssb_2021_m` |
+| `br_emssb_2021_f` |
+| `br_emsmt_2010_m` |
+| `br_emsmt_2010_f` |
+| `br_emsmt_2015_m` |
+| `br_emsmt_2015_f` |
+| `br_emsmt_2021_m` |
+| `br_emsmt_2021_f` |
+
+#### IBGE — Brazilian population tables
+
+| Name |
+|------|
+| `ibge_2006_ambos_os_sexos` |
+| `ibge_2007_ambos_os_sexos` |
+| `ibge_2008_ambos_os_sexos` |
+| `ibge_2009_ambos_os_sexos` |
+| `ibge_2020_homens` |
+| `ibge_2020_mulheres` |
+
+#### Brazilian industry-specific tables
+
+| Name |
+|------|
+| `iba_ferroviarios` |
+| `iba_ferroviarios_v2` |
+| `iapb_57_forte` |
+| `iapb_57_fraca` |
+| `iapc` |
+| `light_forte` |
+| `light_media` |
+| `prudential_50` |
+| `prudential_ferr_aposent` |
+| `rgps_99_02_m_m` |
+| `experiencia_cap` |
+| `alvaro_vindas` |
+| `grupal_americana` |
+| `grupal_americana_v2` |
+| `grupo_americana` |
+
+#### RRB — Railroad Retirement Board
+
+| Name |
+|------|
+| `rrb_44` |
+| `rrb_1944_mod_fem` |
+| `rrb_1944_mod_masc` |
+
+#### SGB — Swiss tables
+
+| Name |
+|------|
+| `sgb_51` |
+| `sgb_71` |
+| `sgb_75` |
+
+#### Historical and international tables
+
+| Name |
+|------|
+| `allg_72` |
+| `american_experience` |
+| `bentzien` |
+| `eb7_75` |
+| `hunter_s` |
+| `hunter_semitropical` |
+| `muller` |
+| `muller_v2` |
+| `rentiers_francais` |
+| `tasa_1927` |
+| `tasa_1927_v2` |
+| `ustp_61` |
+| `winklevoss` |
+| `wyatt_1985` |
+| `x_17` |
+| `zimmermann` |
+| `zimmermann_empr_escrit` |
+| `zimmermann_ferr_alemaes` |
 
 ### Multi-column R tables
 
